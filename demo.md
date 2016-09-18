@@ -59,12 +59,12 @@ INSERT `orders`:[`cost`,`shipped`] VALUES
 #### Insert a customer and their order at the same time
 ```
 INSERT `customers`:[`name`,`orders`:[`cost`,`shipped`]] VALUES
-        `customers`:["Jack Dorsey",`orders`:[53.2, 0]]
+        `customers`:["Jack Dorsey",`orders`:[53.2, false]]
 ```
 This inserts Jack Dorsey as a customer, and automatically creates and associates an order with him with a cost of $53.20 that hasn't shipped.  Multiple orders could have been inserted when his customer account was created by using parameters that were arrays, such as:
 ```
 // ?cost = [59.2, 60.22, 12.9, 97]
-// ?shipped = [0, 0, 0, 0]
+// ?shipped = [false, false, false, false]
 
 ... VALUES `customers`:["Jack Dorsey",`orders`:[?cost, ?shipped]]
 ```
@@ -74,13 +74,13 @@ This would have created and associated 4 orders with the new customer.  Paramete
 
 ```
 UPDATE `orders`
-        SET `shipped` = 1
+        SET `shipped` = true
         WHERE `orders`.`customers`:(`id` == 2)
 ```
 
 ```
 UPDATE `orders`
-        SET `shipped` = 1
+        SET `shipped` = true
         WHERE `orders`.`customers`:(`name` == "Steve Jobs" AND `id` == 4)
 ```
 
@@ -101,12 +101,12 @@ Result:
                         {
                                 'id': 3,
                                 'cost': 200,
-                                'shipped': 1
+                                'shipped': true
                         },
                         {
                                 'id': 2,
                                 'cost': 44.5,
-                                'shipped': 1
+                                'shipped': true
                         }
                 ]
         },
@@ -117,7 +117,7 @@ Result:
                         {
                                 'id': 6,
                                 'cost': 53.2,
-                                'shipped': 0
+                                'shipped': false
                         }
                 ]
         },
@@ -128,7 +128,7 @@ Result:
                         {
                                 'id': 1,
                                 'cost': 12.5,
-                                'shipped': 0
+                                'shipped': false
                         }
                 ]
         },
@@ -139,7 +139,7 @@ Result:
                         {
                                 'id': 4,
                                 'cost': 9.8,
-                                'shipped': 0
+                                'shipped': false
                         }
                 ]
         },
@@ -150,7 +150,7 @@ Result:
                         {
                                 'id': 5,
                                 'cost': 77.42,
-                                'shipped': 1
+                                'shipped': true
                         }
                 ]
         }
@@ -174,7 +174,7 @@ Result:
                         {
                                 'id': 3,
                                 'cost': 200,
-                                'shipped': 1
+                                'shipped': true
                         }
                 ]
         }
@@ -200,12 +200,12 @@ Result:
                         {
                                 'id': 2,
                                 'cost': 44.5,
-                                'shipped': 1
+                                'shipped': true
                         },
                         {
                                 'id': 3,
                                 'cost': 200,
-                                'shipped': 1
+                                'shipped': true
                         }
                 ]
         }
@@ -227,7 +227,7 @@ Result:
         {
                 'id': 5,
                 'cost': 77.42,
-                'shipped': 1,
+                'shipped': true,
                 'customers': [
                         {
                                 'id': 4,
