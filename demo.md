@@ -32,26 +32,26 @@ INSERT `customers`:[`name`] VALUES
 #### Log customer's orders
 ```
 INSERT `orders`:[`cost`,`shipped`] VALUES
-        `orders`:[12.5, 0]
+        `orders`:[12.5, false]
         ASSOCIATE WITH `customers`:`id` == 1
 ```
 
 ```
 INSERT `orders`:[`cost`,`shipped`] VALUES
-        `orders`:[200, 0],
-        `orders`:[44.5, 0]
+        `orders`:[200, false],
+        `orders`:[44.5, false]
         ASSOCIATE WITH `customers`:`id` == 2
 ```
 
 ```
 INSERT `orders`:[`cost`,`shipped`] VALUES
-        `orders`:[9.8, 0]
+        `orders`:[9.8, false]
         ASSOCIATE WITH `customers`:`id` == 3
 ```
 
 ```
 INSERT `orders`:[`cost`,`shipped`] VALUES
-        `orders`:[77.42, 0]
+        `orders`:[77.42, false]
         ASSOCIATE WITH `customers`:`id` == 4
 ```
 
