@@ -26,10 +26,7 @@ SGQL has two main goals - be as easy to understand as SQL, and not require any c
 
 ## Datatypes
 
-There are 6 datatypes: `boolean`, `integer`, `double`, `string`, `array` (multiple elements of a single datatype), and `null`.  Comparisons of datatypes results in one element being "upgraded" to another datatype.  The upgrade path is boolean -> integer -> double -> string -> array -> null (any value upgraded to null is non-null).  For instance, if an integer and an array were being compared, the integer would be upgraded to the datatype of the array, and then be put into an array by itself.
-
-Array comparison is done by comparing each element inside of the array.  If the arrays are different lengths, only a `!=` comparison will be true - all others will be false.  If they are the same length, every index in both arrays is compared, and if all comparisons are true, the array comparison is true.  Otherwise, it will be false.
-
+There are 5 datatypes: `boolean`, `integer`, `double`, `string`, and `null`.  Comparisons of datatypes results in one element being "upgraded" to another datatype.  The upgrade path is boolean -> integer -> double -> string -> null (any value upgraded to null is non-null).  For instance, if an integer and a boolean were being compared, the boolean would be upgraded to an integer (1 for true, 0 for false), and then the comparison would take place.
 
 ## Graph structure file
 
