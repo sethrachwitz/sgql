@@ -237,4 +237,4 @@ Result:
         }
 ]
 ```
-Note that even though an order can only have one customer, the customer is still sent back in an array.  This is so that if the graph structure is ever changed to that multiple customers can be associated with an order, the code will not require any modifications to handle multiple customers being returned.
+Note that even though an order can only have one customer, the customer is still sent back in an array.  This is so that if the graph structure is ever changed so that multiple customers can be associated with an order, the code will not require any modifications to handle multiple customers being returned.
