@@ -1,0 +1,139 @@
+<query>         ::= <select> [<where>] [<order>] [<show>]
+                  | <insert> <values> [<associate>]
+                  | <update> <where> <set> <associate> | <update> <where> <set> | <update> <where> <associate>
+                  | <delete> [<where>]
+                  | <undelete> [<where>]
+                  | <describe>
+                  ;
+
+
+; Query types
+<select>        ::= "SELECT" <locationgraph> ;
+<insert>        ::= "INSERT" <locationgraph> ;
+<update>        ::= "UPDATE" <schemaname> ;
+<delete>        ::= "DELETE" <schemaname> ;
+<undelete>      ::= "UNDELETE" <schemaname> ;
+<describe>      ::= "DESCRIBE" <schemaname> ;
+
+
+; LOCATION GRAPH
+<locationgraph> ::= <schemaname>":[" <locationgraphi> "]" ;
+
+<locationgraphi>::= <schemaname>":[" <locationgraphi> "]" ["," <locationgraphi>]
+                  | <columnname> ["," <locationgraphi>]
+                  | <locationagg> ["," <locationgraphi>]
+                  | <namespacecount> ["," <locationgraphi>]
+                  ;
+
+<locationagg>   ::= <aggfuncname>"(" <location> ")" ;
+<namespacecount>::= <countfuncname>"(" <namespace> ")" ;
+
+
+; WHERE
+<where>         ::= WHERE <wheres> ;
+
+<wheres>        ::= <wherecompare> ["AND" <wheres>] ;
+
+<wherecompare>  ::= <namespace>":(" <colaggcomps> ")"
+                  | <namespace>":"<colaggcomp>
+                  ;
+
+<colaggcomps>   ::= <colaggcomp> ["AND" <colaggcomps>];
+
+<colaggcomp>    ::= ["HAS"] <columnname> <comparison> <value>
+                  | <columnname> "IN" <parameter>
+                  | <colagg> <comparison> <value>
+                  ;
+
+<colagg>        ::= <aggfuncname>"(" <columnname ")" ;
+<schemacount>   ::= <countfuncname"(" <schemaname> ")" ;
+
+
+; VALUES
+<values>        ::= VALUES <valuegraphs> ;
+
+<valuegraphs>   ::= <schemaname>":[" <valuegraph> "]" ;
+
+<valuegraph>    ::= <schemaname>":[" <valuegraph> "]" ["," <valuegraph>]
+                  | <value> ["," <valuegraph>]
+                  ;
+
+
+; SET
+<set>           ::= SET <sets> ;
+
+<sets>          ::= <colassign> ["," <sets>] ;
+
+<colassign>     ::= <columnname> <assign> <value> ;
+
+
+// ASSOCIATE
+<associate>     ::= "ASSOCIATE" "WITH" <associates> ;
+
+<associates>    ::= <colexpr> ["," <associates>] ;
+
+<colexpr>       ::= <column> <comparison> <value> ;
+
+
+; ORDER
+<order>         ::= "ORDER" <orders> ;
+
+<orders>        ::= <orderby> ["," <orders>] ;
+
+<orderby>       ::= <namespace> "BY" <columnname> <orderoptions> ;
+
+<orderoptions>  ::= "ASC" | "DESC" ;
+
+
+; SHOW
+<show>          ::= "SHOW" <shows> ;
+
+<shows>         ::= <showrp> ["," <showrs>] ;
+
+<showrs>        ::= <showr> ["," <showrs>] ;
+
+<showrp>        ::= <showr> ["PAGE" <posinteger>] ;
+
+<showr>         ::= <postinteger> <namespace> ;
+
+
+; Columns, schemas, locations, and hierarchies
+<schemaname>    ::= <backtickname> ;
+
+<columnname>    ::= <backtickname> ;
+
+<location>      ::= <namespace>":"<columnname> ;
+
+<column>        ::= <schemaname>":"<columnname> ;
+
+<namespace>     ::= <schemaname>["."<namespace>] ;
+
+
+; Low level
+<backtickname>  ::= "`"<objectname>"`" | <objectname> ;
+
+<value>         ::= <constant> | <parameter> ;
+
+<parameter>     ::= "?"<alphanum> ;
+
+<constant>      ::= <double> | <integer> | <string> | <boolean> ;
+
+
+; Operators
+<comparison>    ::= "==" | "!=" | "<" | "<=" | ">" | ">=" ;
+<assign>        ::= "=" ;
+
+
+; Function names
+<aggfuncname>   ::= "SUM" | "AVERAGE" | "MEAN" | "MEDIAN" | "MIN" | "MAX" ;
+<countfuncname> ::= "COUNT" ;
+
+
+; Tokens
+<objectname>    ::= ^([0-9a-zA-Z$_]+)(?=[\s`,.\)\]]) ;
+<alphanum>      ::= ^([a-zA-Z0-9]+)(?=[\s`,.\)\]]) ;
+<integer>       ::= ^([-]?\d+)(?=[\s`,.\)\]]) ;
+<posinteger>    ::= ^([1-9]+[0-9]*)(?=[\s`,.\)\]]) ;
+<double>        ::= ^([-]?[0-9]*\.?[0-9]+)(?=[\s`,.\)\]]) ;
+<string>        ::= ^(L?\"(\\.|[^\\"])*\")(?=[\s`,.\)\]]) ;
+<boolean>       ::= "true" | "false" ;
