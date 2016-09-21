@@ -10,17 +10,17 @@
 ; Query types
 <select>        ::= "SELECT" <locationgraph> ;
 <insert>        ::= "INSERT" <locationgraph> ;
-<update>        ::= "UPDATE" <schemaname> ;
-<delete>        ::= "DELETE" <schemaname> ;
-<undelete>      ::= "UNDELETE" <schemaname> ;
-<describe>      ::= "DESCRIBE" <schemaname> ;
+<update>        ::= "UPDATE" <entityname> ;
+<delete>        ::= "DELETE" <entityname> ;
+<undelete>      ::= "UNDELETE" <entityname> ;
+<describe>      ::= "DESCRIBE" <entityname> ;
 
 
 ; LOCATION GRAPH
-<locationgraph> ::= <schemaname>":[" <locationgraphi> "]" ;
+<locationgraph> ::= <entityname>":[" <locationgraphi> "]" ;
 
-<locationgraphi>::= <schemaname>":[" <locationgraphi> "]" ["," <locationgraphi>]
-                  | <columnname> ["," <locationgraphi>]
+<locationgraphi>::= <entityname>":[" <locationgraphi> "]" ["," <locationgraphi>]
+                  | <entityname> ["," <locationgraphi>]
                   | <locationagg> ["," <locationgraphi>]
                   | <namespacecount> ["," <locationgraphi>]
                   ;
@@ -40,21 +40,21 @@
 
 <colaggcomps>   ::= <colaggcomp> ["AND" <colaggcomps>];
 
-<colaggcomp>    ::= ["HAS"] <columnname> <comparison> <value>
-                  | <columnname> "IN" <parameter>
+<colaggcomp>    ::= ["HAS"] <entityname> <comparison> <value>
+                  | <entityname> "IN" <parameter>
                   | <colagg> <comparison> <value>
                   ;
 
-<colagg>        ::= <aggfuncname>"(" <columnname ")" ;
-<schemacount>   ::= <countfuncname"(" <schemaname> ")" ;
+<colagg>        ::= <aggfuncname>"(" <entityname ")" ;
+<schemacount>   ::= <countfuncname"(" <entityname> ")" ;
 
 
 ; VALUES
 <values>        ::= VALUES <valuegraphs> ;
 
-<valuegraphs>   ::= <schemaname>":[" <valuegraph> "]" ;
+<valuegraphs>   ::= <entityname>":[" <valuegraph> "]" ;
 
-<valuegraph>    ::= <schemaname>":[" <valuegraph> "]" ["," <valuegraph>]
+<valuegraph>    ::= <entityname>":[" <valuegraph> "]" ["," <valuegraph>]
                   | <value> ["," <valuegraph>]
                   ;
 
@@ -64,7 +64,7 @@
 
 <sets>          ::= <colassign> ["," <sets>] ;
 
-<colassign>     ::= <columnname> <assign> <value> ;
+<colassign>     ::= <entityname> <assign> <value> ;
 
 
 // ASSOCIATE
@@ -80,7 +80,7 @@
 
 <orders>        ::= <orderby> ["," <orders>] ;
 
-<orderby>       ::= <namespace> "BY" <columnname> <orderoptions> ;
+<orderby>       ::= <namespace> "BY" <entityname> <orderoptions> ;
 
 <orderoptions>  ::= "ASC" | "DESC" ;
 
@@ -94,23 +94,20 @@
 
 <showrp>        ::= <showr> ["PAGE" <posinteger>] ;
 
-<showr>         ::= <postinteger> <namespace> ;
+<showr>         ::= <posinteger> <namespace> ;
 
 
-; Columns, schemas, locations, and hierarchies
-<schemaname>    ::= <backtickname> ;
+; Columns, locations, and namespaces
 
-<columnname>    ::= <backtickname> ;
+<location>      ::= <namespace>":"<entityname> ;
 
-<location>      ::= <namespace>":"<columnname> ;
+<column>        ::= <entityname>":"<entityname> ;
 
-<column>        ::= <schemaname>":"<columnname> ;
-
-<namespace>     ::= <schemaname>["."<namespace>] ;
+<namespace>     ::= <entityname>["."<namespace>] ;
 
 
 ; Low level
-<backtickname>  ::= "`"<objectname>"`" | <objectname> ;
+<entityname>    ::= "`"<objectname>"`" | <objectname> ;
 
 <value>         ::= <constant> | <parameter> ;
 
