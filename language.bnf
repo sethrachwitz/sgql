@@ -34,9 +34,7 @@
 
 <wheres>        ::= <wherecompare> ["AND" <wheres>] ;
 
-<wherecompare>  ::= <namespace>":(" <colaggcomps> ")"
-                  | <namespace>":"<colaggcomp>
-                  ;
+<wherecompare>  ::= <namespace>":(" <colaggcomps> ")" ;
 
 <colaggcomps>   ::= <colaggcomp> ["AND" <colaggcomps>];
 
