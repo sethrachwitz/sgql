@@ -3,12 +3,16 @@
 class Parser {
     // Keywords
     const TOKEN_QUERY = 'query';
-    const TOKEN_SELECT = 'select';
-    const TOKEN_INSERT = 'insert';
-    const TOKEN_UPDATE = 'update';
-    const TOKEN_DELETE = 'delete';
-    const TOKEN_UNDELETE = 'undelete';
-    const TOKEN_DESCRIBE = 'describe';
+    const KEYWORD_SELECT = 'SELECT';
+    const KEYWORD_INSERT = 'INSERT';
+    const KEYWORD_UPDATE = 'UPDATE';
+    const KEYWORD_DELETE = 'DELETE';
+    const KEYWORD_UNDELETE = 'UNDELETE';
+    const KEYWORD_DESCRIBE = 'DESCRIBE';
+
+    const KEYWORD_WHERE = 'WHERE';
+    const TOKEN_WHERES = 'wheres';
+    const TOKEN_WHERE_COMPARE = 'whereCompare';
 
     // Graphs
     const TOKEN_LOCATION_GRAPH = 'locationGraph';
@@ -30,13 +34,13 @@ class Parser {
     const TOKEN_COUNT_FUNCTION_NAME = 'countFunctionName';
 
     // Aggregations
-    const TOKEN_SUM = 'sum';
-    const TOKEN_AVERAGE = 'average';
-    const TOKEN_MEAN = 'mean';
-    const TOKEN_MEDIAN = 'median';
-    const TOKEN_MIN = 'min';
-    const TOKEN_MAX = 'max';
-    const TOKEN_COUNT = 'count';
+    const KEYWORD_SUM = 'SUM';
+    const KEYWORD_AVERAGE = 'AVERAGE';
+    const KEYWORD_MEAN = 'MEAN';
+    const KEYWORD_MEDIAN = 'MEDIAN';
+    const KEYWORD_MIN = 'MIN';
+    const KEYWORD_MAX = 'MAX';
+    const TOKEN_COUNT = 'COUNT';
 
     // Regex that determines when a token can be terminated (i.e., valid tokens will terminate with
     // one of these characters coming after it
@@ -191,6 +195,19 @@ class Parser {
         return $characters;
     }
 
+    private function returnWhitespace() {
+        $index = $this->cursor;
+
+        while ($index > 0 &&
+            ($this->query[$index - 1] == ' ' ||
+            $this->query[$index - 1] === "\t" ||
+            $this->query[$index - 1] === "\n" ||
+            $this->query[$index - 1] === "\r")) {
+            $index--;
+        }
+
+        $this->setCursor($index);
+    }
 
 
     /**
@@ -204,21 +221,53 @@ class Parser {
 
         $token = $this->grabRegex('[A-Z]+', false);
 
+        $this->grabWhitespace(1);
+
         $type = $token['value'];
 
         // Check that the query starts with a valid token
-        switch (strtolower($type)) {
-            case self::TOKEN_SELECT:    // passthrough
-            case self::TOKEN_INSERT:    // passthrough
-            case self::TOKEN_UPDATE:    // passthrough
-            case self::TOKEN_DELETE:    // passthrough
-            case self::TOKEN_UNDELETE:  // passthrough
-            case self::TOKEN_DESCRIBE:  // passthrough
-                $this->grabWhitespace(1);
-                $result[$type] = $this->grabToken($type);
+        switch ($type) {
+            case self::KEYWORD_SELECT:    // passthrough
+            case self::KEYWORD_INSERT:    // passthrough
+                $result[$type] = $this->grabToken(self::TOKEN_LOCATION_GRAPH,
+                    ['canHaveAggregations' => (strtolower($type) == self::KEYWORD_SELECT)]
+                );
                 break;
+            case self::KEYWORD_UPDATE:    // passthrough
+            case self::KEYWORD_DELETE:    // passthrough
+            case self::KEYWORD_UNDELETE:  // passthrough
+            case self::KEYWORD_DESCRIBE:  // passthrough
             default:
                 $this->throwException("Invalid query type");
+                break;
+        }
+
+        // Expect whitespace after the last token (return any whitespace, and then grab it to make sure it is there)
+        $this->returnWhitespace();
+        $this->grabWhitespace(1);
+
+        // WHERE clause check
+        switch ($type) {
+            case self::KEYWORD_SELECT:    // passthrough
+            case self::KEYWORD_INSERT:    // passthrough
+                // WHERE clause is optional
+                if ($this->grabString('WHERE', true)) {
+                    $this->grabWhitespace(1);
+                    $result[self::KEYWORD_WHERE] = $this->grabToken(self::TOKEN_WHERES);
+                }
+                break;
+            case self::KEYWORD_UPDATE:
+                // WHERE clause is not optional
+                $this->grabString('WHERE');
+                $this->grabWhitespace(1);
+                $result[self::KEYWORD_WHERE] = $this->grabToken(self::TOKEN_WHERES);
+                break;
+            case self::KEYWORD_DELETE:    // passthrough
+            case self::KEYWORD_UNDELETE:  // passthrough
+            default:
+                // Whitespace was taken before the WHERE was checked, return this for the next
+                // token check as it will require whitespace before it
+                $this->returnWhitespace();
                 break;
         }
 
@@ -230,10 +279,6 @@ class Parser {
         }
 
         return $result;
-    }
-
-    private function selectToken() {
-        return $this->grabToken(self::TOKEN_LOCATION_GRAPH);
     }
 
     private function locationGraphToken($options) {
@@ -363,13 +408,13 @@ class Parser {
 
         $token1 = $this->grabRegex('[A-Z]+');
 
-        switch (strtolower($token1['value'])) {
-            case self::TOKEN_SUM:
-            case self::TOKEN_AVERAGE:
-            case self::TOKEN_MEAN:
-            case self::TOKEN_MEDIAN:
-            case self::TOKEN_MIN:
-            case self::TOKEN_MAX:
+        switch ($token1['value']) {
+            case self::KEYWORD_SUM:
+            case self::KEYWORD_AVERAGE:
+            case self::KEYWORD_MEAN:
+            case self::KEYWORD_MEDIAN:
+            case self::KEYWORD_MIN:
+            case self::KEYWORD_MAX:
                 break;
             default:
                 $this->setCursor($cursor);
@@ -384,7 +429,7 @@ class Parser {
 
         $token1 = $this->grabRegex('[A-Z]+');
 
-        switch (strtolower($token1['value'])) {
+        switch ($token1['value']) {
             case self::TOKEN_COUNT:
                 break;
             default:

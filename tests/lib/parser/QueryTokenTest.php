@@ -2,7 +2,7 @@
 
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
-class SelectTokenTest extends Parser_TestCase {
+class QueryTokenTest extends Parser_TestCase {
     public function testValidSelect() {
         require 'fixtures/validSelect1.php';
 
