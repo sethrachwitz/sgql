@@ -43,9 +43,6 @@
                   | <colagg> <comparison> <value>
                   ;
 
-<colagg>        ::= <aggfuncname>"(" <entityname ")" ;
-<schemacount>   ::= <countfuncname"(" <entityname> ")" ;
-
 
 ; VALUES
 <values>        ::= VALUES <valuegraphs> ;
@@ -129,6 +126,6 @@
 <alphanum>      ::= ^([a-zA-Z0-9]+)(?=[\s`,.\)\]]) ;
 <integer>       ::= ^([-]?\d+)(?=[\s`,.\)\]]) ;
 <posinteger>    ::= ^([1-9]+[0-9]*)(?=[\s`,.\)\]]) ;
-<double>        ::= ^([-]?[0-9]*\.?[0-9]+)(?=[\s`,.\)\]]) ;
+<double>        ::= ^([-]?[0-9]*\.[0-9]+)(?=[\s`,.\)\]]) ;
 <string>        ::= ^(L?\"(\\.|[^\\"])*\")(?=[\s`,.\)\]]) ;
 <boolean>       ::= "true" | "false" ;
