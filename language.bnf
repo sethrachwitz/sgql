@@ -34,13 +34,14 @@
 
 <wheres>        ::= <wherecompare> ["AND" <wheres>] ;
 
-<wherecompare>  ::= <namespace>":(" <colaggcomps> ")" ;
+<wherecompare>  ::= <namespace>":(" <compares> ")" ;
 
-<colaggcomps>   ::= <colaggcomp> ["AND" <colaggcomps>];
+<compares>      ::= <compare> ["AND" <compares>];
 
-<colaggcomp>    ::= ["HAS"] <entityname> <comparison> <value>
-                  | <entityname> "IN" <parameter>
-                  | <colagg> <comparison> <value>
+<compare>       ::= ["HAS"] <entityname> <comparison> <value>
+                  | ["HAS"] <entityname> "IN" <parameter>
+                  | <locationagg> <comparison> <value>
+                  | <namespacecount> <comparison> <value>
                   ;
 
 
