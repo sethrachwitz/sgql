@@ -287,7 +287,7 @@ class Parser {
         $this->grabString(':[');
         $this->grabWhitespace();
 
-        $token2 = $this->grabToken(self::TOKEN_LOCATION_GRAPH_I, $options);
+        $token2 = $this->grabToken(self::TOKEN_LOCATION_GRAPH_I, false, $options);
 
         $this->grabWhitespace();
         $this->grabString(']');
@@ -313,7 +313,7 @@ class Parser {
             if (($token2 = $this->grabString(':[', true)) !== false) {
                 $this->grabWhitespace();
 
-                $token3 = $this->grabToken(self::TOKEN_LOCATION_GRAPH_I, $options);
+                $token3 = $this->grabToken(self::TOKEN_LOCATION_GRAPH_I, false, $options);
 
                 $this->grabWhitespace();
                 $this->grabString(']');
