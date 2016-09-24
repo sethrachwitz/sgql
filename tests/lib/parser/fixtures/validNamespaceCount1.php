@@ -4,11 +4,11 @@ $input = 'COUNT(`schema1`.`schema2`.`schema3`)';
 
 $expected = [
     'type' => Parser::TOKEN_NAMESPACE_COUNT,
-    'countFunctionName' => [
+    Parser::TOKEN_COUNT_FUNCTION_NAME => [
         'value' => 'COUNT',
         'location' => 0,
     ],
-    'namespace' => [
+    Parser::TOKEN_NAMESPACE => [
         [
             'type' => Parser::TOKEN_ENTITY_NAME,
             'value' => 'schema1',
