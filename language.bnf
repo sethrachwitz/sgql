@@ -25,8 +25,10 @@
                   | <namespacecount> ["," <locationgraphi>]
                   ;
 
-<locationagg>   ::= <aggfuncname>"(" <location> ")" ;
-<namespacecount>::= <countfuncname>"(" <namespace> ")" ;
+<locationagg>   ::= <aggfuncname>"(" <location> ")" <alias> ;
+<namespacecount>::= <countfuncname>"(" <namespace> ")" <alias> ;
+
+<alias>         ::= "AS" <entityname> ;
 
 
 ; WHERE
