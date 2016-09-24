@@ -21,6 +21,7 @@ class Parser {
     // Functions and their inputs
     const TOKEN_LOCATION_AGGREGATION = 'locationAggregation';
     const TOKEN_NAMESPACE_COUNT = 'namespaceCount';
+    const TOKEN_ALIAS = 'alias';
 
     // Entities
     const TOKEN_ENTITY_NAME = 'entityName';
@@ -304,9 +305,9 @@ class Parser {
             $canHaveAggregations = false;
         }
 
-        if ($canHaveAggregations && ($token1 = $this->grabToken(self::TOKEN_LOCATION_AGGREGATION, true))) {
+        if ($canHaveAggregations && ($token1 = $this->grabToken(self::TOKEN_LOCATION_AGGREGATION, true, ['requireAlias' => true]))) {
             // <locationagg>
-        } else if ($canHaveAggregations && ($token1 = $this->grabToken(self::TOKEN_NAMESPACE_COUNT, true))) {
+        } else if ($canHaveAggregations && ($token1 = $this->grabToken(self::TOKEN_NAMESPACE_COUNT, true, ['requireAlias' => true]))) {
             // <schemacount>
         } else if ($token1 = $this->grabToken(self::TOKEN_ENTITY_NAME)) {
             // <entityname>:[ <locationgraphi> ]
@@ -367,7 +368,12 @@ class Parser {
         return $schemas;
     }
 
-    private function locationAggregationToken() {
+    private function locationAggregationToken($options) {
+        $requireAlias = false;
+        if (isset($options['requireAlias']) && $options['requireAlias'] === true) {
+            $requireAlias = true;
+        }
+
         $token1 = $this->grabToken(self::TOKEN_AGGREGATION_FUNCTION_NAME);
 
         $this->grabString('(');
@@ -378,14 +384,28 @@ class Parser {
         $this->grabWhitespace();
         $this->grabString(')');
 
-        return [
+        $result = [
             'type' => self::TOKEN_LOCATION_AGGREGATION,
             self::TOKEN_AGGREGATION_FUNCTION_NAME => $token1,
             self::TOKEN_LOCATION => $token2,
         ];
+
+        if ($requireAlias) {
+            $this->grabWhitespace(1);
+            $token3 = $this->grabToken(self::TOKEN_ALIAS);
+
+            $result[self::TOKEN_ALIAS] = $token3;
+        }
+
+        return $result;
     }
 
-    private function namespaceCountToken() {
+    private function namespaceCountToken($options) {
+        $requireAlias = false;
+        if (isset($options['requireAlias']) && $options['requireAlias'] === true) {
+            $requireAlias = true;
+        }
+
         $token1 = $this->grabToken(self::TOKEN_COUNT_FUNCTION_NAME);
 
         $this->grabString('(');
@@ -396,10 +416,34 @@ class Parser {
         $this->grabWhitespace();
         $this->grabString(')');
 
-        return [
+        $result = [
             'type' => self::TOKEN_NAMESPACE_COUNT,
             self::TOKEN_COUNT_FUNCTION_NAME => $token1,
             self::TOKEN_NAMESPACE => $token2,
+        ];
+
+        if ($requireAlias) {
+            $this->grabWhitespace(1);
+            $token3 = $this->grabToken(self::TOKEN_ALIAS);
+
+            $result[self::TOKEN_ALIAS] = $token3;
+        }
+
+        return $result;
+    }
+
+    private function aliasToken() {
+        $cursor = $this->cursor;
+        $this->grabString("AS");
+        $this->grabWhitespace(1);
+
+        $token1 = $this->grabToken(self::TOKEN_ENTITY_NAME);
+
+        return [
+            'type' => self::TOKEN_ALIAS,
+            'value' => $token1['value'],
+            'withBackticks' => $token1['withBackticks'],
+            'location' => $cursor
         ];
     }
 

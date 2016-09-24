@@ -12,6 +12,24 @@ class NamespaceCountTokenTest extends Parser_TestCase {
         $this->assertEquals($expected, $result);
     }
 
+    public function testValidNamespaceCountRequiresAlias() {
+        require 'fixtures/validNamespaceCount1.php';
+
+        $input .= ' AS columnCount';
+
+        $expected[Parser::TOKEN_ALIAS] = [
+            'type' => Parser::TOKEN_ALIAS,
+            'value' => 'columnCount',
+            'withBackticks' => '`columnCount`',
+            'location' => 37,
+        ];
+
+        $parser = new Parser($input, Parser::TOKEN_NAMESPACE_COUNT, ['requireAlias' => true]);
+        $result = $parser->getParsed();
+
+        $this->assertEquals($expected, $result);
+    }
+
     public function invalidNamespaceCountProvider() {
         return [
             ['COUNT(`schema`:`column`)',    'Expected \')\'',           14],

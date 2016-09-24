@@ -1,6 +1,6 @@
 <?php
 
-$input = '`column1`,`schema1`:[s1col1,COUNT(`schema2`),SUM(`schema2`:`s2col1`)],`column2`,MAX(`test`:`col`)';
+$input = '`column1`,`schema1`:[s1col1,COUNT(`schema2`) AS schema2count, SUM(`schema2`:`s2col1`) AS s2col1sum],`column2`,MAX(`test`:`col`) AS maxcol';
 
 $expected = [
     [
@@ -35,12 +35,18 @@ $expected = [
                         'location' => 34,
                     ]
                 ],
+                Parser::TOKEN_ALIAS => [
+                    'type' => Parser::TOKEN_ALIAS,
+                    'value' => 'schema2count',
+                    'withBackticks' => '`schema2count`',
+                    'location' => 45,
+                ],
             ],
             [
                 'type' => Parser::TOKEN_LOCATION_AGGREGATION,
                 Parser::TOKEN_AGGREGATION_FUNCTION_NAME => [
                     'value' => 'SUM',
-                    'location' => 45,
+                    'location' => 62,
                 ],
                 Parser::TOKEN_LOCATION => [
                     'type' => Parser::TOKEN_LOCATION,
@@ -49,15 +55,21 @@ $expected = [
                             'type' => Parser::TOKEN_ENTITY_NAME,
                             'value' => 'schema2',
                             'withBackticks' => '`schema2`',
-                            'location' => 49,
+                            'location' => 66,
                         ]
                     ],
                     Parser::TOKEN_COLUMN => [
                         'type' => Parser::TOKEN_ENTITY_NAME,
                         'value' => 's2col1',
                         'withBackticks' => '`s2col1`',
-                        'location' => 59,
+                        'location' => 76,
                     ],
+                ],
+                Parser::TOKEN_ALIAS => [
+                    'type' => Parser::TOKEN_ALIAS,
+                    'value' => 's2col1sum',
+                    'withBackticks' => '`s2col1sum`',
+                    'location' => 86,
                 ],
             ],
         ],
@@ -66,13 +78,13 @@ $expected = [
         'type' => Parser::TOKEN_ENTITY_NAME,
         'value' => 'column2',
         'withBackticks' => '`column2`',
-        'location' => 70,
+        'location' => 100,
     ],
     [
         'type' => Parser::TOKEN_LOCATION_AGGREGATION,
         Parser::TOKEN_AGGREGATION_FUNCTION_NAME => [
             'value' => 'MAX',
-            'location' => 80,
+            'location' => 110,
         ],
         Parser::TOKEN_LOCATION => [
             'type' => Parser::TOKEN_LOCATION,
@@ -81,15 +93,21 @@ $expected = [
                     'type' => Parser::TOKEN_ENTITY_NAME,
                     'value' => 'test',
                     'withBackticks' => '`test`',
-                    'location' => 84,
+                    'location' => 114,
                 ]
             ],
             Parser::TOKEN_COLUMN => [
                 'type' => Parser::TOKEN_ENTITY_NAME,
                 'value' => 'col',
                 'withBackticks' => '`col`',
-                'location' => 91,
+                'location' => 121,
             ],
+        ],
+        Parser::TOKEN_ALIAS => [
+            'type' => Parser::TOKEN_ALIAS,
+            'value' => 'maxcol',
+            'withBackticks' => '`maxcol`',
+            'location' => 128,
         ],
     ],
 ];

@@ -12,6 +12,24 @@ class LocationAggregationTokenTest extends Parser_TestCase {
         $this->assertEquals($expected, $result);
     }
 
+    public function testValidLocationAggregationRequiresAlias() {
+        require 'fixtures/validLocationAggregation1.php';
+
+        $input .= ' AS col1Min';
+
+        $expected[Parser::TOKEN_ALIAS] = [
+            'type' => Parser::TOKEN_ALIAS,
+            'value' => 'col1Min',
+            'withBackticks' => '`col1Min`',
+            'location' => 22,
+        ];
+
+        $parser = new Parser($input, Parser::TOKEN_LOCATION_AGGREGATION, ['requireAlias' => true]);
+        $result = $parser->getParsed();
+
+        $this->assertEquals($expected, $result);
+    }
+
     public function invalidLocationAggregationProvider() {
         return [
             ['COUNT(`schema`:`column`)',    'Invalid aggregation function', 0],

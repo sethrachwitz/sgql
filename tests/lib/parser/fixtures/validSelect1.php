@@ -1,6 +1,6 @@
 <?php
 
-$input = 'SELECT `customers`:[`id`,`name`,`orders`:[`id`,`cost`,`shipped`],SUM(`orders`:`cost`)]';
+$input = 'SELECT `customers`:[`id`,`name`,`orders`:[`id`,`cost`,`shipped`],SUM(`orders`:`cost`) AS totalcost]';
 
 $expected = [
     strtoupper(Parser::KEYWORD_SELECT) => [
@@ -69,6 +69,12 @@ $expected = [
                         'withBackticks' => '`cost`',
                         'location' => 78,
                     ],
+                ],
+                Parser::TOKEN_ALIAS => [
+                    'type' => Parser::TOKEN_ALIAS,
+                    'value' => 'totalcost',
+                    'withBackticks' => '`totalcost`',
+                    'location' => 86,
                 ],
             ],
         ],
