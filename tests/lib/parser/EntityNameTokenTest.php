@@ -15,8 +15,8 @@ class EntityNameTokenTest extends Parser_TestCase {
     }
 
     /**
-	 * @dataProvider validEntityNameProvider
-	 */
+     * @dataProvider validEntityNameProvider
+     */
     public function testValidEntityName($input, $value) {
         $parser = new Parser($input, Parser::TOKEN_ENTITY_NAME);
         $result = $parser->getParsed();
@@ -30,8 +30,8 @@ class EntityNameTokenTest extends Parser_TestCase {
     }
 
     /**
-	 * @dataProvider validEntityNameProvider
-	 */
+     * @dataProvider validEntityNameProvider
+     */
     public function testValidEntityNameWithBackticks($input, $value) {
         $parser = new Parser('`'.$input.'`', Parser::TOKEN_ENTITY_NAME);
         $result = $parser->getParsed();
@@ -56,8 +56,8 @@ class EntityNameTokenTest extends Parser_TestCase {
     }
 
     /**
-	 * @dataProvider invalidEntityNameProvider
-	 */
+     * @dataProvider invalidEntityNameProvider
+     */
     public function testInvalidEntityName($input) {
         try {
             $parser = new Parser($input, Parser::TOKEN_ENTITY_NAME);
@@ -83,8 +83,8 @@ class EntityNameTokenTest extends Parser_TestCase {
     }
 
     /**
-	 * @dataProvider validEntityNameWithMultipleTokensInInputProvider
-	 */
+     * @dataProvider validEntityNameWithMultipleTokensInInputProvider
+     */
     public function testValidEntityNameWithMultipleTokensInInput($input, $value) {
         $parser = new Parser($input, Parser::TOKEN_ENTITY_NAME);
         $result = $parser->getParsed();
@@ -107,8 +107,8 @@ class EntityNameTokenTest extends Parser_TestCase {
     }
 
     /**
-	 * @dataProvider invalidEntityNameWithMultipleTokensInInputProvider
-	 */
+     * @dataProvider invalidEntityNameWithMultipleTokensInInputProvider
+     */
     public function testInvalidEntityNameWithMultipleTokensInInput($input) {
         try {
             $parser = new Parser($input, Parser::TOKEN_ENTITY_NAME);

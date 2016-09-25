@@ -17,8 +17,8 @@ class ValueTokenTest extends Parser_TestCase {
     }
 
     /**
-	 * @dataProvider validValueProvider
-	 */
+     * @dataProvider validValueProvider
+     */
     public function testValidValue($input, $type) {
         $parser = new Parser($input, Parser::TOKEN_VALUE);
         $result = $parser->getParsed();
@@ -45,8 +45,8 @@ class ValueTokenTest extends Parser_TestCase {
     }
 
     /**
-	 * @dataProvider invalidValueProvider
-	 */
+     * @dataProvider invalidValueProvider
+     */
     public function testInvalidValue($input) {
         try {
             $parser = new Parser($input, Parser::TOKEN_VALUE);

@@ -12,8 +12,8 @@ class ParameterTokenTest extends Parser_TestCase {
     }
 
     /**
-	 * @dataProvider validParameterProvider
-	 */
+     * @dataProvider validParameterProvider
+     */
     public function testValidParameter($input) {
         $parser = new Parser($input, Parser::TOKEN_PARAMETER);
         $result = $parser->getParsed();
@@ -35,8 +35,8 @@ class ParameterTokenTest extends Parser_TestCase {
     }
 
     /**
-	 * @dataProvider invalidParameterProvider
-	 */
+     * @dataProvider invalidParameterProvider
+     */
     public function testInvalidParameter($input) {
         try {
             $parser = new Parser($input, Parser::TOKEN_PARAMETER);

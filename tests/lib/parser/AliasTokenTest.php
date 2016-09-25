@@ -15,8 +15,8 @@ class AliasTokenTest extends Parser_TestCase {
     }
 
     /**
-	 * @dataProvider validAliasProvider
-	 */
+     * @dataProvider validAliasProvider
+     */
     public function testValidAlias($input, $value) {
         $parser = new Parser($input, Parser::TOKEN_ALIAS);
         $result = $parser->getParsed();
@@ -40,8 +40,8 @@ class AliasTokenTest extends Parser_TestCase {
     }
 
     /**
-	 * @dataProvider invalidAliasProvider
-	 */
+     * @dataProvider invalidAliasProvider
+     */
     public function testInvalidAlias($input, $cursor, $exception, $currentString) {
         try {
             $parser = new Parser($input, Parser::TOKEN_ALIAS);
