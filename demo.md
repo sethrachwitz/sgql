@@ -74,14 +74,14 @@ This would have created and associated 4 orders with the new customer.  Paramete
 
 ```
 UPDATE `orders`
-        SET `shipped` = true
         WHERE `orders`.`customers`:(`id` == 2)
+        SET `shipped` = true
 ```
 
 ```
 UPDATE `orders`
-        SET `shipped` = true
         WHERE `orders`.`customers`:(`name` == "Steve Jobs" AND `id` == 4)
+        SET `shipped` = true
 ```
 
 #### Show all customers in alphabetical order, and their orders in decreasing order of cost
