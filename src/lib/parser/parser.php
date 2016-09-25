@@ -13,6 +13,8 @@ class Parser {
     const KEYWORD_WHERE = 'WHERE';
     const TOKEN_WHERES = 'wheres';
     const TOKEN_WHERE_COMPARE = 'whereCompare';
+    const TOKEN_COMPARES = 'compares';
+    const TOKEN_COMPARE = 'compare';
 
     // Graphs
     const TOKEN_LOCATION_GRAPH = 'locationGraph';
@@ -346,6 +348,127 @@ class Parser {
         }
 
         return [$token1];
+    }
+
+    private function wheresToken() {
+        $token1 = $this->grabToken(self::TOKEN_WHERE_COMPARE);
+
+        try {
+            $this->grabWhitespace();
+            $this->grabString("AND");
+        } catch (Exception $e) {
+            // No other comparisons to see here
+            $this->returnWhitespace();
+            return [$token1];
+        }
+
+        $this->grabWhitespace(1);
+
+        $token2 = $this->grabToken(self::TOKEN_WHERES);
+
+        return array_merge([$token1], $token2);
+    }
+
+    private function whereCompareToken() {
+        $token1 = $this->grabToken(self::TOKEN_NAMESPACE);
+
+        $this->grabString(":(");
+        $this->grabWhitespace();
+
+        $token2 = $this->grabToken(self::TOKEN_COMPARES);
+
+        $this->grabWhitespace();
+        $this->grabString(")");
+
+        return [
+            'type' => self::TOKEN_WHERE_COMPARE,
+            self::TOKEN_NAMESPACE => $token1,
+            self::TOKEN_COMPARES => $token2
+        ];
+    }
+
+    private function comparesToken() {
+        $token1 = $this->grabToken(self::TOKEN_COMPARE);
+
+        try {
+            $this->grabWhitespace(1);
+            $this->grabString("AND");
+        } catch (Exception $e) {
+            // No other comparisons to see here
+            $this->returnWhitespace();
+            return [$token1];
+        }
+
+        $this->grabWhitespace(1);
+
+        $token2 = $this->grabToken(self::TOKEN_COMPARES);
+
+        return array_merge([$token1], $token2);
+    }
+
+    private function compareToken() {
+        $has = false;
+        if ($this->grabString("HAS", true)) {
+            $has = true;
+            $this->grabWhitespace(1);
+        }
+
+        // Find out if this is a <entityname> or <colagg> token
+        if (!$token1 = $this->grabToken(self::TOKEN_LOCATION_AGGREGATION, true)) {
+            if (!$token1 = $this->grabToken(self::TOKEN_NAMESPACE_COUNT, true)) {
+                try {
+                    $token1 = $this->grabToken(self::TOKEN_ENTITY_NAME);
+                } catch (Exception $e) {
+                    $this->throwException("Invalid location aggregation or entity name");
+                }
+            }
+        }
+
+        // Cannot use HAS with an aggregation function
+        if ($has && ($token1['type'] == self::TOKEN_LOCATION_AGGREGATION || $token1['type'] == self::TOKEN_NAMESPACE_COUNT)) {
+            $this->setCursor($this->cursor - 3);
+            $this->throwException("Use of 'HAS' is limited to non-aggregation comparisons");
+        }
+
+        $this->grabWhitespace(1);
+
+        if ($this->grabString("IN", true)) {
+            if ($token1['type'] == self::TOKEN_LOCATION_AGGREGATION || $token1['type'] == self::TOKEN_NAMESPACE_COUNT) {
+                $this->setCursor($this->cursor - 2);
+                $this->throwException("Use of 'IN' is limited to non-aggregation comparisons");
+            }
+
+            $token2 = [
+                'type' => self::TOKEN_COMPARISON,
+                'value' => 'IN',
+                'location' => $this->cursor - 2, // Length of "IN"
+            ];
+
+            $this->grabWhitespace(1);
+
+            $token3 = $this->grabToken(self::TOKEN_PARAMETER);
+        } else {
+            $token2 = $this->grabToken(self::TOKEN_COMPARISON);
+
+            $this->grabWhitespace(1);
+
+            // Grab token or value
+            if (!$token3 = $this->grabToken(self::TOKEN_VALUE, true)) {
+                try {
+                    $token3 = $this->grabToken(self::TOKEN_PARAMETER);
+                } catch (Exception $e) {
+                    $this->throwException("Invalid value or parameter");
+                }
+            }
+        }
+
+        return [
+            'type' => self::TOKEN_COMPARE,
+            'has' => $has,
+            'key' => $token1,
+            self::TOKEN_COMPARISON => $token2,
+            'value' => $token3,
+        ];
     }
 
     private function locationToken() {

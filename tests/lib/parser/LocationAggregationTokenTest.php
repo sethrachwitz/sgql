@@ -34,6 +34,7 @@ class LocationAggregationTokenTest extends Parser_TestCase {
         return [
             ['COUNT(`schema`:`column`)',    'Invalid aggregation function', 0],
             ['SUM(`sch&ema`:`column`)',     'Invalid entity name',          4],
+            ['SUM(`schema`)',               "Expected ':'",                 12],
             ['COUNT(`schema`)',             'Invalid aggregation function', 0],
             ['SUM(``)',                     'Invalid entity name',          4],
             ['SUM()',                       'Invalid entity name',          4],

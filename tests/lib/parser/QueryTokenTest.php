@@ -12,6 +12,15 @@ class QueryTokenTest extends Parser_TestCase {
         $this->assertEquals($expected, $result);
     }
 
+    public function testValidSelectWithWhere() {
+        require 'fixtures/validSelectWithWhere1.php';
+
+        $parser = new Parser($input, Parser::TOKEN_QUERY);
+        $result = $parser->getParsed();
+
+        $this->assertEquals($expected, $result);
+    }
+
     public function invalidSelectProvider() {
         return [
             ['SELECT`tests`',               'Whitespace expected',      6],
@@ -20,6 +29,8 @@ class QueryTokenTest extends Parser_TestCase {
             ['SELECT `tests`:[COUNT()]',    'Expected \']\'',           21],
             ['SELECT `tests`:[`col`',       'Expected \']\'',           22],
             ['SELECT `tests`:[`col]',       'Missing closing backtick', 16],
+            ['SELECT `tests`:[`col`] WHERE `tests`:`col` == 2', "Expected ':('", 36],
+            ['SELECT `tests`:[`col`] WHERE `tests`:(`col` == 2) AND `contacts`:()', "Invalid location aggregation or entity name",  66],
         ];
     }
 
