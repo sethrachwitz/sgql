@@ -43,6 +43,8 @@ class Parser {
     const KEYWORD_MAX = 'MAX';
     const TOKEN_COUNT = 'COUNT';
 
+    const TOKEN_PARAMETER = 'parameter';
+
     // Regex that determines when a token can be terminated (i.e., valid tokens will terminate with
     // one of these characters coming after it
     const TERMINATING_REGEX = '(?=[\s`,:.\(\[\)\]])';
@@ -482,6 +484,21 @@ class Parser {
         }
 
         return $token1;
+    }
+
+    private function parameterToken() {
+        if (!$token1 = $this->grabRegex('\?[0-9a-zA-Z]+')) {
+            $this->throwException("Invalid parameter name");
+        }
+
+        // Trim off the ?
+        $token1['value'] = substr($token1['value'], 1);
+
+        return [
+            'type' => self::TOKEN_PARAMETER,
+            'value' => $token1['value'],
+            'location' => $token1['location'],
+        ];
     }
 
     private function entityNameToken() {
