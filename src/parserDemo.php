@@ -2,7 +2,7 @@
 
 require 'lib/parser/parser.php';
 
-$query = "SELECT `customers`:[`id`,`name`,`orders`:[`id`,`cost`,`shipped`],SUM(`orders`:`cost`)]";
+$query = "SELECT `customers`:[`id`,`name`,`orders`:[`id`,`cost`,`shipped`],SUM(`orders`:`cost`) AS totalCost]";
 
 echo "Query:\n".$query."\n\n";
 
