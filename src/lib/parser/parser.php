@@ -43,7 +43,13 @@ class Parser {
     const KEYWORD_MAX = 'MAX';
     const TOKEN_COUNT = 'COUNT';
 
+    const TOKEN_VALUE = 'value';
     const TOKEN_PARAMETER = 'parameter';
+
+    const TOKEN_INTEGER = 'integer';
+    const TOKEN_DOUBLE = 'double';
+    const TOKEN_STRING = 'string';
+    const TOKEN_BOOLEAN = 'boolean';
 
     // Regex that determines when a token can be terminated (i.e., valid tokens will terminate with
     // one of these characters coming after it
@@ -484,6 +490,69 @@ class Parser {
         }
 
         return $token1;
+    }
+
+    private function valueToken() {
+        if (!$token1 = $this->grabToken(self::TOKEN_DOUBLE, true)) {
+            if (!$token1 = $this->grabToken(self::TOKEN_INTEGER, true)) {
+                if (!$token1 = $this->grabToken(self::TOKEN_STRING, true)) {
+                    if (!$token1 = $this->grabToken(self::TOKEN_BOOLEAN, true)) {
+                        $this->throwException("Invalid value");
+                    }
+                }
+            }
+        }
+
+        return $token1;
+    }
+
+    private function integerToken() {
+        if (!$token1 = $this->grabRegex('[-]?[0-9]+')) {
+            $this->throwException('Invalid integer');
+        }
+
+        return [
+            'type' => self::TOKEN_INTEGER,
+            'value' => $token1['value'],
+            'location' => $token1['location'],
+        ];
+    }
+
+    private function doubleToken() {
+        if (!$token1 = $this->grabRegex('[-]?[0-9]*\.[0-9]+')) {
+            $this->throwException('Invalid double');
+        }
+
+        return [
+            'type' => self::TOKEN_DOUBLE,
+            'value' => $token1['value'],
+            'location' => $token1['location'],
+        ];
+    }
+
+    private function stringToken() {
+        if (!$token1 = $this->grabRegex('L?\"(\\.|[^\\"])*\"')) {
+            $this->throwException('Invalid string');
+        }
+
+        return [
+            'type' => self::TOKEN_STRING,
+            'value' => substr($token1['value'], 1, -1),
+            'withQuotes' => $token1['value'],
+            'location' => $token1['location'],
+        ];
+    }
+
+    private function booleanToken() {
+        if (!$token1 = $this->grabRegex('true|false')) {
+            $this->throwException('Invalid boolean');
+        }
+
+        return [
+            'type' => self::TOKEN_BOOLEAN,
+            'value' => $token1['value'],
+            'location' => $token1['location'],
+        ];
     }
 
     private function parameterToken() {
