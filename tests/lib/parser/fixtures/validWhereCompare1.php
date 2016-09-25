@@ -1,6 +1,6 @@
 <?php
 
-$input = '`orders`:(cost >= 19.4 AND HAS `id` IN ?ids)';
+$input = '`orders`:(cost >= 19.4 AND `id` IN ?ids)';
 
 $expected = [
     'type' => Parser::TOKEN_WHERE_COMPARE,
@@ -15,7 +15,6 @@ $expected = [
     Parser::TOKEN_COMPARES => [
         [
             'type' => Parser::TOKEN_COMPARE,
-            'has' => false,
             'key' => [
                 'type' => Parser::TOKEN_ENTITY_NAME,
                 'value' => 'cost',
@@ -35,22 +34,21 @@ $expected = [
         ],
         [
             'type' => Parser::TOKEN_COMPARE,
-            'has' => true,
             'key' => [
                 'type' => Parser::TOKEN_ENTITY_NAME,
                 'value' => 'id',
                 'withBackticks' => '`id`',
-                'location' => 31,
+                'location' => 27,
             ],
             Parser::TOKEN_COMPARISON => [
                 'type' => Parser::TOKEN_COMPARISON,
                 'value' => 'IN',
-                'location' => 36,
+                'location' => 32,
             ],
             Parser::TOKEN_VALUE => [
                 'type' => Parser::TOKEN_PARAMETER,
                 'value' => 'ids',
-                'location' => 39,
+                'location' => 35,
             ],
         ],
     ],

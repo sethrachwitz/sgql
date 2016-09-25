@@ -98,11 +98,6 @@ The naming of schemas and column names is limited to the following characters:
 
 Backticks can be used to surround schema and column names.  They are entirely optional and are only made available for readability.
 
-## More on namespaces
-Namespaces are a way of grouping sets of records based on their location in the selected graph structure.  For instance, `customers.orders` specifies each customer may have a set of orders.  In the `WHERE` clause, filtering is done on namespaces in order to facilitate filtering based on sets of records rather than individual records.  Therefore, `customers.orders:(HAS id == 1)` means that for each customer, look at their orders and if the order with ID 1 is in that set, keep the set.  `customers.orders(id == 1)` means for each customer, look at their set of orders and only keep an order in the set if it has the ID 1.
-
-`customers.orders.items` means that each customer may have a set of associated orders, and each order may have a set of associated items.  `customers.orders.items:(HAS id == 3)` means that each set of items should be checked to see if it has the item with ID 3.  If that record is in the set, keep the set, otherwise don't show anything in that set.  If the filter was `customers.orders.items:(id == 3)`, it would check each set and only keep an item if the item was ID 3.
-
 
 ## Structure of results
 

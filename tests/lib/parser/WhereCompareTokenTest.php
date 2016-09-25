@@ -48,7 +48,7 @@ class WhereCompareTokenTest extends Parser_TestCase {
     }
 
     public function testInvalidWhereCompareWithMultipleTokensInInput() {
-        $input = 'schema1:(COUNT(schema2) 2 AND HAS id == 2) AND';
+        $input = 'schema1:(COUNT(schema2) 2 AND HAS(schema2:id == 2) == true AND';
 
         try {
             $parser = new Parser($input, Parser::TOKEN_WHERE_COMPARE);

@@ -187,7 +187,7 @@ Result:
 Query:
 ```
 SELECT `customers`:[`id`,`name`,`orders`:[`id`,`cost`,`shipped`]]
-        WHERE `customers`.`orders`:(HAS `id` == 3) AND `customers`:(COUNT(`orders`) > 0)
+        WHERE `customers`:(HAS(`orders`:`id` == 3) == true)
 ```
 
 Result:
@@ -211,7 +211,7 @@ Result:
         }
 ]
 ```
-Since a customer can have multiple orders associated with them, the `HAS` keyword is used to see if one of the orders associated with the customer has the id 2.  Since this is a check and not a filter, all of the orders are shown.
+Since a customer can have multiple orders associated with them, the `HAS` function is used to see if one of the orders associated with each customer has the ID 2.  Since this is a check in the `customers` namespace and not a filter on the `customers.orders` namespace, all of the orders are shown for the customer that has order ID 2, and since none of the other customers will pass the check, they are not returned.
 
 #### Show only order 5 and the customer associated with it
 

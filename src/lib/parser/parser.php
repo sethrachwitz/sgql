@@ -45,6 +45,8 @@ class Parser {
     const KEYWORD_MAX = 'MAX';
     const TOKEN_COUNT = 'COUNT';
 
+    const TOKEN_HAS_COMPARE = 'hasCompare';
+
     const TOKEN_COMPARISON = 'comparison';
 
     const TOKEN_VALUE = 'value';
@@ -407,33 +409,23 @@ class Parser {
     }
 
     private function compareToken() {
-        $has = false;
-        if ($this->grabString("HAS", true)) {
-            $has = true;
-            $this->grabWhitespace(1);
-        }
-
         // Find out if this is a <entityname> or <colagg> token
         if (!$token1 = $this->grabToken(self::TOKEN_LOCATION_AGGREGATION, true)) {
             if (!$token1 = $this->grabToken(self::TOKEN_NAMESPACE_COUNT, true)) {
-                try {
-                    $token1 = $this->grabToken(self::TOKEN_ENTITY_NAME);
-                } catch (Exception $e) {
-                    $this->throwException("Invalid location aggregation or entity name");
+                if (!$token1 = $this->grabToken(self::TOKEN_HAS_COMPARE, true)) {
+                    try {
+                        $token1 = $this->grabToken(self::TOKEN_ENTITY_NAME);
+                    } catch (Exception $e) {
+                        $this->throwException("Invalid location aggregation or entity name");
+                    }
                 }
             }
-        }
-
-        // Cannot use HAS with an aggregation function
-        if ($has && ($token1['type'] == self::TOKEN_LOCATION_AGGREGATION || $token1['type'] == self::TOKEN_NAMESPACE_COUNT)) {
-            $this->setCursor($this->cursor - 3);
-            $this->throwException("Use of 'HAS' is limited to non-aggregation comparisons");
         }
 
         $this->grabWhitespace(1);
 
         if ($this->grabString("IN", true)) {
-            if ($token1['type'] == self::TOKEN_LOCATION_AGGREGATION || $token1['type'] == self::TOKEN_NAMESPACE_COUNT) {
+            if ($token1['type'] != self::TOKEN_ENTITY_NAME) {
                 $this->setCursor($this->cursor - 2);
                 $this->throwException("Use of 'IN' is limited to non-aggregation comparisons");
             }
@@ -464,7 +456,6 @@ class Parser {
 
         return [
             'type' => self::TOKEN_COMPARE,
-            'has' => $has,
             'key' => $token1,
             self::TOKEN_COMPARISON => $token2,
             'value' => $token3,
@@ -565,6 +556,45 @@ class Parser {
         return $result;
     }
 
+    private function hasCompareToken() {
+        $this->grabString("HAS(");
+
+        $this->grabWhitespace();
+
+        $token1 = $this->grabToken(self::TOKEN_LOCATION);
+
+        $this->grabWhitespace(1);
+
+        if ($this->grabString("IN", true)) { // Uses "IN" instead of comparison operator
+            $token2 = [
+                'type' => self::TOKEN_COMPARISON,
+                'value' => 'IN',
+                'location' => $this->cursor - 2, // Length of "IN"
+            ];
+
+            $this->grabWhitespace(1);
+
+            $token3 = $this->grabToken(self::TOKEN_PARAMETER);
+        } else { // Should be a comparison operator
+            $token2 = $this->grabToken(self::TOKEN_COMPARISON);
+
+            $this->grabWhitespace(1);
+
+            $token3 = $this->grabToken(self::TOKEN_VALUE);
+        }
+
+        $this->grabWhitespace();
+
+        $this->grabString(")");
+
+        return [
+            'type' => self::TOKEN_HAS_COMPARE,
+            self::TOKEN_LOCATION => $token1,
+            self::TOKEN_COMPARISON => $token2,
+            self::TOKEN_VALUE => $token3,
+        ];
+    }
+
     private function aliasToken() {
         $cursor = $this->cursor;
         $this->grabString("AS");
@@ -634,7 +664,9 @@ class Parser {
             if (!$token1 = $this->grabToken(self::TOKEN_INTEGER, true)) {
                 if (!$token1 = $this->grabToken(self::TOKEN_STRING, true)) {
                     if (!$token1 = $this->grabToken(self::TOKEN_BOOLEAN, true)) {
-                        $this->throwException("Invalid value");
+                        if (!$token1 = $this->grabToken(self::TOKEN_PARAMETER, true)) {
+                            $this->throwException("Invalid value");
+                        }
                     }
                 }
             }

@@ -4,7 +4,6 @@ $input = 'SUM(`orders`:cost) > 200';
 
 $expected = [
     'type' => Parser::TOKEN_COMPARE,
-    'has' => false,
     'key' => [
         'type' => Parser::TOKEN_LOCATION_AGGREGATION,
         Parser::TOKEN_AGGREGATION_FUNCTION_NAME => [

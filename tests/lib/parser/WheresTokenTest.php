@@ -57,7 +57,7 @@ class WheresTokenTest extends Parser_TestCase {
     }
 
     public function testInvalidWheresWithMultipleTokensInInput() {
-        $input = 'schema1:(COUNT(schema2) > 2 AND HAS id == 2) AND schema1.schema2(COUNT(schema3) > 2) ORDER';
+        $input = 'schema1:(COUNT(schema2) > 2 AND HAS(schema3:id == 2) == true) AND schema1.schema2(COUNT(schema3) > 2) ORDER';
 
         try {
             $parser = new Parser($input, Parser::TOKEN_WHERES);
@@ -65,8 +65,8 @@ class WheresTokenTest extends Parser_TestCase {
         } catch (Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => "Expected ':('",
-                'cursor' => 64,
-                'currentString' => substr($input, 64),
+                'cursor' => 81,
+                'currentString' => substr($input, 81),
             ], $e->getMessage());
         }
     }

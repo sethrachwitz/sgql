@@ -40,10 +40,15 @@
 
 <compares>      ::= <compare> ["AND" <compares>];
 
-<compare>       ::= ["HAS"] <entityname> <comparison> <value>
-                  | ["HAS"] <entityname> "IN" <parameter>
+<compare>       ::= <entityname> <comparison> <value>
+                  | <entityname> "IN" <parameter>
+                  | <hascompare> <comparison> <value>
                   | <locationagg> <comparison> <value>
                   | <namespacecount> <comparison> <value>
+                  ;
+
+<hascompare>    ::= "HAS(" <location> <comparison> <value> ")"
+                  | "HAS(" <location> "IN" <parameter> ")"
                   ;
 
 

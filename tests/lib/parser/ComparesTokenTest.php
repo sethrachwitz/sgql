@@ -14,9 +14,9 @@ class ComparesTokenTest extends Parser_TestCase {
 
     public function invalidComparesProvider() {
         return [
-            ['COUNT(`schema`) == 2 AND id',     "Expected comparison operator",                 28],
-            ['SUM(`schema`:count) == 2 AND',    "Invalid location aggregation or entity name",  29],
-            ['schema AND HAS cost == 2',        'Expected comparison operator',                 7],
+            ['COUNT(`schema`) == 2 AND id',                 "Expected comparison operator",                 28],
+            ['SUM(`schema`:count) == 2 AND',                "Invalid location aggregation or entity name",  29],
+            ['schema AND HAS(schema2:cost == 2) == false',  'Expected comparison operator',                 7],
         ];
     }
 
@@ -48,16 +48,16 @@ class ComparesTokenTest extends Parser_TestCase {
     }
 
     public function testInvalidComparesWithMultipleTokensInInput() {
-        $input = 'COUNT(schema) == 2 AND HAS id IN 2';
+        $input = 'COUNT(schema) == 2 AND HAS(schema2.id > ?param) == true';
 
         try {
             $parser = new Parser($input, Parser::TOKEN_COMPARES);
             $this->fail("Expected invalid compares exception");
         } catch (Exception $e) {
             $this->assertExceptionMessageEquals([
-                'message' => "Invalid parameter name",
-                'cursor' => 33,
-                'currentString' => substr($input, 33),
+                'message' => "Whitespace expected",
+                'cursor' => 26,
+                'currentString' => substr($input, 26),
             ], $e->getMessage());
         }
     }

@@ -1,6 +1,6 @@
 <?php
 
-$input = 'SELECT `customers`:[`id`,`name`,`orders`:[`id`,`cost`,`shipped`],SUM(`orders`:`cost`) AS totalcost] WHERE `customers`:(`name` == "Steven") AND `customers`.`orders`:(HAS id == 123)';
+$input = 'SELECT `customers`:[`id`,`name`,`orders`:[`id`,`cost`,`shipped`],SUM(`orders`:`cost`) AS totalcost] WHERE `customers`:(`name` == "Steven") AND `customers`.`orders`:(id == 123)';
 
 $expected = [
     Parser::KEYWORD_SELECT => [
@@ -93,7 +93,6 @@ $expected = [
             Parser::TOKEN_COMPARES => [
                 [
                     'type' => Parser::TOKEN_COMPARE,
-                    'has' => false,
                     'key' => [
                         'type' => Parser::TOKEN_ENTITY_NAME,
                         'value' => 'name',
@@ -133,22 +132,21 @@ $expected = [
             Parser::TOKEN_COMPARES => [
                 [
                     'type' => Parser::TOKEN_COMPARE,
-                    'has' => true,
                     'key' => [
                         'type' => Parser::TOKEN_ENTITY_NAME,
                         'value' => 'id',
                         'withBackticks' => '`id`',
-                        'location' => 169,
+                        'location' => 165,
                     ],
                     Parser::TOKEN_COMPARISON => [
                         'type' => Parser::TOKEN_COMPARISON,
                         'value' => '==',
-                        'location' => 172,
+                        'location' => 168,
                     ],
                     Parser::TOKEN_VALUE => [
                         'type' => Parser::TOKEN_INTEGER,
                         'value' => '123',
-                        'location' => 175,
+                        'location' => 171,
                     ],
                 ],
             ],

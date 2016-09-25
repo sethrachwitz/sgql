@@ -43,9 +43,8 @@ class CompareTokenTest extends Parser_TestCase {
         return [
             ['COUNT(`schema`) IN 2',        "Use of 'IN' is limited to non-aggregation comparisons",    16],
             ['SUM(`schema`) == 2',          "Whitespace expected",                                      3],
-            ['HAS cost IN 2',               'Invalid parameter name',                                   12],
-            ['HAS',                         'Invalid location aggregation or entity name',              4],
-            ['HAS SUM(`schema`:`col`) > 5', "Use of 'HAS' is limited to non-aggregation comparisons",   20],
+            ['HAS(`orders`.`id`) IN 2',     'Whitespace expected',                                      3],
+            ['HAS',                         'Expected comparison operator',                             4],
         ];
     }
 
@@ -68,7 +67,7 @@ class CompareTokenTest extends Parser_TestCase {
     public function testValidCompareWithMultipleTokensInInput() {
         require 'fixtures/validCompare1.php';
 
-        $input .= ' AND HAS `id` == 5'; // Add another valid token to the input
+        $input .= ' AND HAS(schema:`id` == 5) == true'; // Add another valid token to the input
 
         $parser = new Parser($input, Parser::TOKEN_COMPARE);
         $result = $parser->getParsed();
@@ -77,7 +76,7 @@ class CompareTokenTest extends Parser_TestCase {
     }
 
     public function testInvalidCompareWithMultipleTokensInInput() {
-        $input = 'COUNT(schema) IN 2 AND HAS id == 2';
+        $input = 'COUNT(schema) IN 2 AND HAS(schema2:id == 2)';
 
         try {
             $parser = new Parser($input, Parser::TOKEN_COMPARE);
