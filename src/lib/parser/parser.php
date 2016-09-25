@@ -43,6 +43,8 @@ class Parser {
     const KEYWORD_MAX = 'MAX';
     const TOKEN_COUNT = 'COUNT';
 
+    const TOKEN_COMPARISON = 'comparison';
+
     const TOKEN_VALUE = 'value';
     const TOKEN_PARAMETER = 'parameter';
 
@@ -490,6 +492,18 @@ class Parser {
         }
 
         return $token1;
+    }
+
+    private function comparisonToken() {
+        if (!$token1 = $this->grabRegex('(==|!=|<|>|<=|>=)')) {
+            $this->throwException("Expected comparison operator");
+        }
+
+        return [
+            'type' => self::TOKEN_COMPARISON,
+            'value' => $token1['value'],
+            'location' => $token1['location'],
+        ];
     }
 
     private function valueToken() {
