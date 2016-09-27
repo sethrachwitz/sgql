@@ -20,6 +20,9 @@ class Parser {
     const TOKEN_LOCATION_GRAPH = 'locationGraph';
     const TOKEN_LOCATION_GRAPH_I = 'locationGraphI';
 
+    const TOKEN_VALUE_GRAPH = 'valueGraph';
+    const TOKEN_VALUE_GRAPH_I = 'valueGraphI';
+
     // Functions and their inputs
     const TOKEN_LOCATION_AGGREGATION = 'locationAggregation';
     const TOKEN_NAMESPACE_COUNT = 'namespaceCount';
@@ -348,6 +351,55 @@ class Parser {
 
             return array_merge([$token1], $token5);
         }
+
+        return [$token1];
+    }
+
+    private function valueGraphToken() {
+        $token1 = $this->grabToken(self::TOKEN_ENTITY_NAME);
+
+        $this->grabString(':[');
+        $this->grabWhitespace();
+
+        $token2 = $this->grabToken(self::TOKEN_VALUE_GRAPH_I);
+
+        $this->grabWhitespace();
+        $this->grabString(']');
+
+        // Nest the graph inside of the entity
+        $token1[self::TOKEN_VALUE_GRAPH] = $token2;
+
+        return $token1;
+    }
+
+    private function valueGraphIToken() {
+        // Check if value or entity (which would then have a nested graph)
+        if ($token1 = $this->grabToken(self::TOKEN_VALUE, true)) {
+            $this->grabWhitespace();
+
+            if ($token4 = $this->grabString(',', true)) {
+                // [ "," <locationgraphi> ]
+                $this->grabWhitespace();
+
+                $token5 = $this->grabToken(self::TOKEN_VALUE_GRAPH_I);
+
+                return array_merge([$token1], $token5);
+            }
+        } else if ($token1 = $this->grabToken(self::TOKEN_ENTITY_NAME, true)) { // Token is an entity, so it will have a nested graph
+            $token2 = $this->grabString(':[');
+            $this->grabWhitespace();
+
+            $token3 = $this->grabToken(self::TOKEN_VALUE_GRAPH_I);
+
+            $this->grabWhitespace();
+            $this->grabString(']');
+
+            // Nest the graph inside of the entity
+            $token1[self::TOKEN_VALUE_GRAPH] = $token3;
+        } else { // Neither valid token was found
+            $this->throwException("Invalid entity name or value");
+        }
+
 
         return [$token1];
     }

@@ -53,12 +53,12 @@
 
 
 ; VALUES
-<values>        ::= VALUES <valuegraphs> ;
+<values>        ::= VALUES <valuegraph> ;
 
-<valuegraphs>   ::= <entityname>":[" <valuegraph> "]" ;
+<valuegraph>    ::= <entityname>":[" <valuegraphi> "]" ;
 
-<valuegraph>    ::= <entityname>":[" <valuegraph> "]" ["," <valuegraph>]
-                  | <value> ["," <valuegraph>]
+<valuegraphi>   ::= <entityname>":[" <valuegraphi> "]" ["," <valuegraphi>]
+                  | <value> ["," <valuegraphi>]
                   ;
 
 
