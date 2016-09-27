@@ -266,14 +266,14 @@ class Parser {
             case self::KEYWORD_SELECT:    // passthrough
             case self::KEYWORD_INSERT:    // passthrough
                 // WHERE clause is optional
-                if ($this->grabString('WHERE', true)) {
+                if ($this->grabString(self::KEYWORD_WHERE, true)) {
                     $this->grabWhitespace(1);
                     $result[self::KEYWORD_WHERE] = $this->grabToken(self::TOKEN_WHERES);
                 }
                 break;
             case self::KEYWORD_UPDATE:
                 // WHERE clause is not optional
-                $this->grabString('WHERE');
+                $this->grabString(self::KEYWORD_WHERE);
                 $this->grabWhitespace(1);
                 $result[self::KEYWORD_WHERE] = $this->grabToken(self::TOKEN_WHERES);
                 break;
