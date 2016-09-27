@@ -87,4 +87,40 @@ class QueryTokenTest extends Parser_TestCase {
             ], $e->getMessage());
         }
     }
+
+    public function testValidUpdate() {
+        require 'fixtures/validUpdate1.php';
+
+        $parser = new Parser($input, Parser::TOKEN_QUERY);
+        $result = $parser->getParsed();
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function invalidUpdateProvider() {
+        return [
+            ['UPDATE`customers` WHERE `customers`(`id` == 4) SET vip = true',   "Whitespace expected",          6],
+            ['UPDATE `customers` WHERE `customers`(`id` == 4) SET vip = true',  "Expected ':('",                36],
+            ['UPDATE `customers` WHERE `customers`:(`id`) SET vip = true',      "Whitespace expected",          42],
+            ['UPDATE `customers` WHERE `customers`:(`id` == 4)',                "Expected 'SET'",               49],
+            ['UPDATE `customers` SET vip = true',                               "Expected 'WHERE'",             19],
+            ['UPDATE `customers` WHERE `customers`:(`id` == 4) SET vip = true,',"Invalid entity name",          65],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidUpdateProvider
+     */
+    public function testInvalidUpdate($input, $message, $cursor) {
+        try {
+            $parser = new Parser($input, Parser::TOKEN_QUERY);
+            $this->fail("Expected invalid update exception");
+        } catch (Exception $e) {
+            $this->assertExceptionMessageEquals([
+                'message' => $message,
+                'cursor' => $cursor,
+                'currentString' => substr($input, $cursor),
+            ], $e->getMessage());
+        }
+    }
 }

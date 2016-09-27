@@ -19,6 +19,7 @@ class Parser {
     const KEYWORD_VALUES = 'VALUES';
     const TOKEN_VALUES = 'values';
 
+    const KEYWORD_SET = 'SET';
     const TOKEN_SETS = 'sets';
     const TOKEN_ENTITY_ASSIGN = 'entityAssign';
 
@@ -259,6 +260,8 @@ class Parser {
                 );
                 break;
             case self::KEYWORD_UPDATE:    // passthrough
+                $result[$type] = $this->grabToken(self::TOKEN_ENTITY_NAME);
+                break;
             case self::KEYWORD_DELETE:    // passthrough
             case self::KEYWORD_UNDELETE:  // passthrough
             case self::KEYWORD_DESCRIBE:  // passthrough
@@ -311,6 +314,30 @@ class Parser {
                 break;
             case self::KEYWORD_SELECT:    // passthrough
             case self::KEYWORD_UPDATE:    // passthrough
+            case self::KEYWORD_DELETE:    // passthrough
+            case self::KEYWORD_UNDELETE:  // passthrough
+            default:
+                // Whitespace was taken before the VALUES was checked, return this for the next
+                // token check as it will require whitespace before it
+                $this->returnWhitespace();
+                break;
+        }
+
+        // Expect whitespace after the last token (return any whitespace, and then grab it to make sure it is there)
+        $this->returnWhitespace();
+        $this->grabWhitespace(1);
+
+        // SET clause check
+        switch ($type) {
+            case self::KEYWORD_UPDATE:
+                // SET clause is not optional
+                if ($this->grabString(self::KEYWORD_SET)) {
+                    $this->grabWhitespace(1);
+                    $result[self::KEYWORD_SET] = $this->grabToken(self::TOKEN_SETS);
+                }
+                break;
+            case self::KEYWORD_SELECT:    // passthrough
+            case self::KEYWORD_INSERT:    // passthrough
             case self::KEYWORD_DELETE:    // passthrough
             case self::KEYWORD_UNDELETE:  // passthrough
             default:
