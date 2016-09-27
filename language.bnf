@@ -1,6 +1,6 @@
 <query>         ::= <select> [<where>] [<order>] [<show>]
                   | <insert> <values> [<associate>]
-                  | <update> <where> <set> <associate> | <update> <where> <set> | <update> <where> <associate>
+                  | <update> <where> <set> <bothassociate> | <update> <where> <set> | <update> <where> <bothassociate>
                   | <delete> [<where>]
                   | <undelete> [<where>]
                   | <describe>
@@ -71,7 +71,14 @@
 
 
 // ASSOCIATE
-<associate>     ::= "ASSOCIATE" "WITH" <associates> ;
+<bothassociate> ::= <associate>
+                  | <disassociate>
+                  | <associate> <disassociate>
+                  ;
+
+<associate>     ::= "ASSOCIATE" <associates> ;
+
+<disassociate>  ::= "DISASSOCIATE" <associates> ;
 
 <associates>    ::= <colexpr> ["," <associates>] ;
 
