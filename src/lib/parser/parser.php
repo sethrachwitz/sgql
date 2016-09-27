@@ -245,7 +245,7 @@ class Parser {
             case self::KEYWORD_SELECT:    // passthrough
             case self::KEYWORD_INSERT:    // passthrough
                 $result[$type] = $this->grabToken(self::TOKEN_LOCATION_GRAPH,
-                    ['canHaveAggregations' => (strtolower($type) == self::KEYWORD_SELECT)]
+                    ['canHaveAggregations' => ($type == self::KEYWORD_SELECT)]
                 );
                 break;
             case self::KEYWORD_UPDATE:    // passthrough

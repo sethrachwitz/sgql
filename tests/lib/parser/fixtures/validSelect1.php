@@ -3,7 +3,7 @@
 $input = 'SELECT `customers`:[`id`,`name`,`orders`:[`id`,`cost`,`shipped`],SUM(`orders`:`cost`) AS totalcost]';
 
 $expected = [
-    strtoupper(Parser::KEYWORD_SELECT) => [
+    Parser::KEYWORD_SELECT => [
         'type' => Parser::TOKEN_ENTITY_NAME,
         'value' => 'customers',
         'withBackticks' => '`customers`',
