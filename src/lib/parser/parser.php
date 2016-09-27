@@ -19,6 +19,9 @@ class Parser {
     const KEYWORD_VALUES = 'VALUES';
     const TOKEN_VALUES = 'values';
 
+    const TOKEN_SETS = 'sets';
+    const TOKEN_ENTITY_ASSIGN = 'entityAssign';
+
     // Graphs
     const TOKEN_LOCATION_GRAPH = 'locationGraph';
     const TOKEN_LOCATION_GRAPH_I = 'locationGraphI';
@@ -54,6 +57,7 @@ class Parser {
     const TOKEN_HAS_COMPARE = 'hasCompare';
 
     const TOKEN_COMPARISON = 'comparison';
+    const TOKEN_ASSIGNMENT = 'assignment';
 
     const TOKEN_VALUE = 'value';
     const TOKEN_PARAMETER = 'parameter';
@@ -541,6 +545,43 @@ class Parser {
         ];
     }
 
+    private function setsToken() {
+        $token1 = $this->grabToken(self::TOKEN_ENTITY_ASSIGN);
+
+        try {
+            $this->grabWhitespace(0);
+            $this->grabString(",");
+        } catch (Exception $e) {
+            // No other comparisons to see here
+            $this->returnWhitespace();
+            return [$token1];
+        }
+
+        $this->grabWhitespace(1);
+
+        $token2 = $this->grabToken(self::TOKEN_SETS);
+
+        return array_merge([$token1], $token2);
+    }
+
+    private function entityAssignToken() {
+        $token1 = $this->grabToken(self::TOKEN_ENTITY_NAME);
+
+        $this->grabWhitespace(1);
+
+        $this->grabToken(self::TOKEN_ASSIGNMENT);
+
+        $this->grabWhitespace(1);
+
+        $token2 = $this->grabToken(self::TOKEN_VALUE);
+
+        return [
+            'type' => self::TOKEN_ENTITY_ASSIGN,
+            'key' => $token1,
+            'value' => $token2,
+        ];
+    }
+
     private function locationToken() {
         $token1 = $this->grabToken(self::TOKEN_NAMESPACE);
 
@@ -733,6 +774,18 @@ class Parser {
 
         return [
             'type' => self::TOKEN_COMPARISON,
+            'value' => $token1['value'],
+            'location' => $token1['location'],
+        ];
+    }
+
+    private function assignmentToken() {
+        if (!$token1 = $this->grabRegex('(=)')) {
+            $this->throwException("Expected assignment operator");
+        }
+
+        return [
+            'type' => self::TOKEN_ASSIGNMENT,
             'value' => $token1['value'],
             'location' => $token1['location'],
         ];

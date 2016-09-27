@@ -67,7 +67,7 @@
 
 <sets>          ::= <colassign> ["," <sets>] ;
 
-<colassign>     ::= <entityname> <assign> <value> ;
+<entityassign>  ::= <entityname> <assign> <value> ;
 
 
 // ASSOCIATE
