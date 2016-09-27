@@ -14,7 +14,7 @@ $expected = [
         'value' => 'schema1',
         'withBackticks' => '`schema1`',
         'location' => 10,
-        Parser::TOKEN_LOCATION_GRAPH_I => [
+        Parser::TOKEN_LOCATION_GRAPH => [
             [
                 'type' => Parser::TOKEN_ENTITY_NAME,
                 'value' => 's1col1',

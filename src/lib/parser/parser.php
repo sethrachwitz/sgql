@@ -334,7 +334,7 @@ class Parser {
                 $this->grabString(']');
 
                 // Nest the graph inside of the entity
-                $token1[self::TOKEN_LOCATION_GRAPH_I] = $token3;
+                $token1[self::TOKEN_LOCATION_GRAPH] = $token3;
             }
         }
 

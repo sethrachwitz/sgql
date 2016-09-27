@@ -26,7 +26,7 @@ $expected = [
                 'value' => 'orders',
                 'withBackticks' => '`orders`',
                 'location' => 32,
-                Parser::TOKEN_LOCATION_GRAPH_I => [
+                Parser::TOKEN_LOCATION_GRAPH => [
                     [
                         'type' => Parser::TOKEN_ENTITY_NAME,
                         'value' => 'id',
