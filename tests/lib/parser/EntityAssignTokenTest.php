@@ -48,12 +48,12 @@ class EntityAssignTokenTest extends Parser_TestCase {
         $this->assertEquals($expected, $result);
     }
 
-    public function testInvalidSetsWithMultipleTokensInInput() {
+    public function testInvalidEntityAssignWithMultipleTokensInInput() {
         $input = 'col1 => 5, col2 = "string"';
 
         try {
             $parser = new Parser($input, Parser::TOKEN_ENTITY_ASSIGN);
-            $this->fail("Expected invalid sets exception");
+            $this->fail("Expected invalid entity assign exception");
         } catch (Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => "Expected assignment operator",
