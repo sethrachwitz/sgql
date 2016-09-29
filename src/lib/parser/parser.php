@@ -293,6 +293,11 @@ class Parser {
             case self::KEYWORD_DELETE:    // passthrough
             case self::KEYWORD_UNDELETE:  // passthrough
             default:
+                $cursor = $this->cursor;
+                if ($this->grabString(self::KEYWORD_WHERE, true)) {
+                    $this->setCursor($cursor);
+                    $this->throwException("Syntax error");
+                }
                 // Whitespace was taken before the WHERE was checked, return this for the next
                 // token check as it will require whitespace before it
                 $this->returnWhitespace();
@@ -317,6 +322,11 @@ class Parser {
             case self::KEYWORD_DELETE:    // passthrough
             case self::KEYWORD_UNDELETE:  // passthrough
             default:
+                $cursor = $this->cursor;
+                if ($this->grabString(self::KEYWORD_VALUES, true)) {
+                    $this->setCursor($cursor);
+                    $this->throwException("Syntax error");
+                }
                 // Whitespace was taken before the VALUES was checked, return this for the next
                 // token check as it will require whitespace before it
                 $this->returnWhitespace();
@@ -341,6 +351,11 @@ class Parser {
             case self::KEYWORD_DELETE:    // passthrough
             case self::KEYWORD_UNDELETE:  // passthrough
             default:
+                $cursor = $this->cursor;
+                if ($this->grabString(self::KEYWORD_SET, true)) {
+                    $this->setCursor($cursor);
+                    $this->throwException("Syntax error");
+                }
                 // Whitespace was taken before the VALUES was checked, return this for the next
                 // token check as it will require whitespace before it
                 $this->returnWhitespace();
