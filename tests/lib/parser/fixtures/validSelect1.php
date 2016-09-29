@@ -63,7 +63,7 @@ $expected = [
                             'location' => 69,
                         ]
                     ],
-                    Parser::TOKEN_COLUMN => [
+                    Parser::TOKEN_ENTITY_NAME => [
                         'type' => Parser::TOKEN_ENTITY_NAME,
                         'value' => 'cost',
                         'withBackticks' => '`cost`',

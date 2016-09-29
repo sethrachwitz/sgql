@@ -634,7 +634,7 @@ class Parser {
         return [
             'type' => self::TOKEN_LOCATION,
             self::TOKEN_NAMESPACE => $token1,
-            self::TOKEN_COLUMN => $token2,
+            self::TOKEN_ENTITY_NAME => $token2,
         ];
     }
 

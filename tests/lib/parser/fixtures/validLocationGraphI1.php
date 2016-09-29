@@ -58,7 +58,7 @@ $expected = [
                             'location' => 66,
                         ]
                     ],
-                    Parser::TOKEN_COLUMN => [
+                    Parser::TOKEN_ENTITY_NAME => [
                         'type' => Parser::TOKEN_ENTITY_NAME,
                         'value' => 's2col1',
                         'withBackticks' => '`s2col1`',
@@ -96,7 +96,7 @@ $expected = [
                     'location' => 114,
                 ]
             ],
-            Parser::TOKEN_COLUMN => [
+            Parser::TOKEN_ENTITY_NAME => [
                 'type' => Parser::TOKEN_ENTITY_NAME,
                 'value' => 'col',
                 'withBackticks' => '`col`',

@@ -47,7 +47,7 @@ $expected = [
                                 'location' => 31,
                             ],
                         ],
-                        Parser::TOKEN_COLUMN => [
+                        Parser::TOKEN_ENTITY_NAME => [
                             'type' => Parser::TOKEN_ENTITY_NAME,
                             'value' => 'id',
                             'withBackticks' => '`id`',
