@@ -23,6 +23,8 @@ class Parser {
     const TOKEN_SETS = 'sets';
     const TOKEN_ENTITY_ASSIGN = 'entityAssign';
 
+    const TOKEN_COLUMN_COMPARE = 'columnCompare';
+
     // Graphs
     const TOKEN_LOCATION_GRAPH = 'locationGraph';
     const TOKEN_LOCATION_GRAPH_I = 'locationGraphI';
@@ -621,6 +623,25 @@ class Parser {
             'type' => self::TOKEN_ENTITY_ASSIGN,
             'key' => $token1,
             'value' => $token2,
+        ];
+    }
+
+    private function columnCompareToken() {
+        $token1 = $this->grabToken(self::TOKEN_COLUMN);
+
+        $this->grabWhitespace(1);
+
+        $token2 = $this->grabToken(self::TOKEN_COMPARISON);
+
+        $this->grabWhitespace(1);
+
+        $token3 = $this->grabToken(self::TOKEN_VALUE);
+
+        return [
+            'type' => self::TOKEN_COLUMN_COMPARE,
+            self::TOKEN_COLUMN => $token1,
+            self::TOKEN_COMPARISON => $token2,
+            self::TOKEN_VALUE => $token3,
         ];
     }
 
