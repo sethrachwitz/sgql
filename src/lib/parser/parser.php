@@ -345,8 +345,8 @@ class Parser {
         // SET clause check
         switch ($type) {
             case self::KEYWORD_UPDATE:
-                // SET clause is not optional
-                if ($this->grabString(self::KEYWORD_SET)) {
+                // SET clause is optional
+                if ($this->grabString(self::KEYWORD_SET, true)) {
                     $this->grabWhitespace(1);
                     $result[self::KEYWORD_SET] = $this->grabToken(self::TOKEN_SETS);
                 }
