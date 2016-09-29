@@ -59,6 +59,15 @@ class QueryTokenTest extends Parser_TestCase {
         $this->assertEquals($expected, $result);
     }
 
+    public function testValidInsertAssociate() {
+        require 'fixtures/validInsert2.php';
+
+        $parser = new Parser($input, Parser::TOKEN_QUERY);
+        $result = $parser->getParsed();
+
+        $this->assertEquals($expected, $result);
+    }
+
     public function invalidInsertProvider() {
         return [
             ['INSERT`tests`',               'Whitespace expected',      6],
@@ -97,12 +106,21 @@ class QueryTokenTest extends Parser_TestCase {
         $this->assertEquals($expected, $result);
     }
 
+    public function testValidUpdateWithAssociateDisassociate() {
+        require 'fixtures/validUpdate2.php';
+
+        $parser = new Parser($input, Parser::TOKEN_QUERY);
+        $result = $parser->getParsed();
+
+        $this->assertEquals($expected, $result);
+    }
+
     public function invalidUpdateProvider() {
         return [
             ['UPDATE`customers` WHERE `customers`(`id` == 4) SET vip = true',   "Whitespace expected",          6],
             ['UPDATE `customers` WHERE `customers`(`id` == 4) SET vip = true',  "Expected ':('",                36],
             ['UPDATE `customers` WHERE `customers`:(`id`) SET vip = true',      "Whitespace expected",          42],
-            ['UPDATE `customers` WHERE `customers`:(`id` == 4)',                "Expected 'SET'",               49],
+            ['UPDATE `customers` WHERE `customers`:(`id` == 4)',                "Expected 'DISASSOCIATE'",      49],
             ['UPDATE `customers` SET vip = true',                               "Expected 'WHERE'",             19],
             ['UPDATE `customers` WHERE `customers`:(`id` == 4) SET vip = true,',"Invalid entity name",          65],
         ];

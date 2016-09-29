@@ -23,6 +23,8 @@ class Parser {
     const TOKEN_SETS = 'sets';
     const TOKEN_ENTITY_ASSIGN = 'entityAssign';
 
+    const KEYWORD_ASSOCIATE = 'ASSOCIATE';
+    const KEYWORD_DISASSOCIATE = 'DISASSOCIATE';
     const TOKEN_ASSOCIATES = 'associates';
     const TOKEN_COLUMN_COMPARE = 'columnCompare';
 
@@ -356,6 +358,65 @@ class Parser {
             default:
                 $cursor = $this->cursor;
                 if ($this->grabString(self::KEYWORD_SET, true)) {
+                    $this->setCursor($cursor);
+                    $this->throwException("Syntax error");
+                }
+                // Whitespace was taken before the VALUES was checked, return this for the next
+                // token check as it will require whitespace before it
+                $this->returnWhitespace();
+                break;
+        }
+
+        // Expect whitespace after the last token (return any whitespace, and then grab it to make sure it is there)
+        $this->returnWhitespace();
+        $this->grabWhitespace(1);
+
+        // ASSOCIATE clause check
+        switch ($type) {
+            case self::KEYWORD_INSERT:    // passthrough
+            case self::KEYWORD_UPDATE:
+                // ASSOCIATE clause is optional
+                if ($this->grabString(self::KEYWORD_ASSOCIATE, true)) {
+                    $this->grabWhitespace(1);
+                    $result[self::KEYWORD_ASSOCIATE] = $this->grabToken(self::TOKEN_ASSOCIATES);
+                }
+                break;
+            case self::KEYWORD_SELECT:    // passthrough
+            case self::KEYWORD_DELETE:    // passthrough
+            case self::KEYWORD_UNDELETE:  // passthrough
+            default:
+                $cursor = $this->cursor;
+                if ($this->grabString(self::KEYWORD_ASSOCIATE, true)) {
+                    $this->setCursor($cursor);
+                    $this->throwException("Syntax error");
+                }
+                // Whitespace was taken before the VALUES was checked, return this for the next
+                // token check as it will require whitespace before it
+                $this->returnWhitespace();
+                break;
+        }
+
+        // Expect whitespace after the last token (return any whitespace, and then grab it to make sure it is there)
+        $this->returnWhitespace();
+        $this->grabWhitespace(1);
+
+        // DISASSOCIATE clause check
+        switch ($type) {
+            case self::KEYWORD_UPDATE:
+                // DISASSOCIATE clause may be optional
+                $optional = (isset($result[self::KEYWORD_SET]) || isset($result[self::KEYWORD_ASSOCIATE]));
+                if ($this->grabString(self::KEYWORD_DISASSOCIATE, $optional)) {
+                    $this->grabWhitespace(1);
+                    $result[self::KEYWORD_DISASSOCIATE] = $this->grabToken(self::TOKEN_ASSOCIATES);
+                }
+                break;
+            case self::KEYWORD_SELECT:    // passthrough
+            case self::KEYWORD_INSERT:    // passthrough
+            case self::KEYWORD_DELETE:    // passthrough
+            case self::KEYWORD_UNDELETE:  // passthrough
+            default:
+                $cursor = $this->cursor;
+                if ($this->grabString(self::KEYWORD_DISASSOCIATE, true)) {
                     $this->setCursor($cursor);
                     $this->throwException("Syntax error");
                 }
