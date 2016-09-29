@@ -80,7 +80,7 @@
 
 <disassociate>  ::= "DISASSOCIATE" <associates> ;
 
-<associates>    ::= <colexpr> ["," <associates>] ;
+<associates>    ::= <colcompare> ["," <associates>] ;
 
 <colcompare>    ::= <column> <comparison> <value> ;
 

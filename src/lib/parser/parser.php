@@ -23,6 +23,7 @@ class Parser {
     const TOKEN_SETS = 'sets';
     const TOKEN_ENTITY_ASSIGN = 'entityAssign';
 
+    const TOKEN_ASSOCIATES = 'associates';
     const TOKEN_COLUMN_COMPARE = 'columnCompare';
 
     // Graphs
@@ -624,6 +625,25 @@ class Parser {
             'key' => $token1,
             'value' => $token2,
         ];
+    }
+
+    private function associatesToken() {
+        $token1 = $this->grabToken(self::TOKEN_COLUMN_COMPARE);
+
+        try {
+            $this->grabWhitespace(0);
+            $this->grabString(",");
+        } catch (Exception $e) {
+            // No other associates to see here
+            $this->returnWhitespace();
+            return [$token1];
+        }
+
+        $this->grabWhitespace(1);
+
+        $token2 = $this->grabToken(self::TOKEN_ASSOCIATES);
+
+        return array_merge([$token1], $token2);
     }
 
     private function columnCompareToken() {
