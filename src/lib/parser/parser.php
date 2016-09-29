@@ -638,6 +638,20 @@ class Parser {
         ];
     }
 
+    private function columnToken() {
+        $token1 = $this->grabToken(self::TOKEN_ENTITY_NAME);
+
+        $this->grabString(':');
+
+        $token2 = $this->grabToken(self::TOKEN_ENTITY_NAME);
+
+        return [
+            'type' => self::TOKEN_COLUMN,
+            self::TOKEN_SCHEMA => $token1,
+            self::TOKEN_ENTITY_NAME => $token2,
+        ];
+    }
+
     private function namespaceToken() {
         $token1 = $this->grabToken(self::TOKEN_ENTITY_NAME);
 

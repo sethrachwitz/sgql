@@ -82,7 +82,7 @@
 
 <associates>    ::= <colexpr> ["," <associates>] ;
 
-<colexpr>       ::= <column> <comparison> <value> ;
+<colcompare>    ::= <column> <comparison> <value> ;
 
 
 ; ORDER
