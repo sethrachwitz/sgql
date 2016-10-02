@@ -33,6 +33,7 @@ class Parser {
     const TOKEN_ORDER_BY = 'orderBy';
     const TOKEN_ORDER_DIRECTION = 'orderDirection';
 
+    const KEYWORD_SHOW = 'SHOW';
     const KEYWORD_PAGE = 'PAGE';
     const TOKEN_SHOWS = 'shows';
     const TOKEN_SHOW_I = 'showI';
@@ -462,6 +463,35 @@ class Parser {
                     $this->throwException("Syntax error");
                 }
                 // Whitespace was taken before the ORDER was checked, return this for the next
+                // token check as it will require whitespace before it
+                $this->returnWhitespace();
+                break;
+        }
+
+        // Expect whitespace after the last token (return any whitespace, and then grab it to make sure it is there)
+        $this->returnWhitespace();
+        $this->grabWhitespace(1);
+
+        // SHOW clause check
+        switch ($type) {
+            case self::KEYWORD_SELECT:
+                // ORDER clause is optional
+                if ($this->grabString(self::KEYWORD_SHOW, true)) {
+                    $this->grabWhitespace(1);
+                    $result[self::KEYWORD_SHOW] = $this->grabToken(self::TOKEN_SHOWS);
+                }
+                break;
+            case self::KEYWORD_UPDATE:    // passthrough
+            case self::KEYWORD_INSERT:    // passthrough
+            case self::KEYWORD_DELETE:    // passthrough
+            case self::KEYWORD_UNDELETE:
+            default:
+                $cursor = $this->cursor;
+                if ($this->grabString(self::KEYWORD_SHOW, true)) {
+                    $this->setCursor($cursor);
+                    $this->throwException("Syntax error");
+                }
+                // Whitespace was taken before the SHOW was checked, return this for the next
                 // token check as it will require whitespace before it
                 $this->returnWhitespace();
                 break;
