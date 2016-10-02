@@ -259,17 +259,19 @@ class Parser {
         // Check that the query starts with a valid token
         switch ($type) {
             case self::KEYWORD_SELECT:    // passthrough
-            case self::KEYWORD_INSERT:    // passthrough
+            case self::KEYWORD_INSERT:
                 $result[$type] = $this->grabToken(self::TOKEN_LOCATION_GRAPH,
                     ['canHaveAggregations' => ($type == self::KEYWORD_SELECT)]
                 );
                 break;
             case self::KEYWORD_UPDATE:    // passthrough
+            case self::KEYWORD_DELETE:    // passthrough
+            case self::KEYWORD_UNDELETE:
                 $result[$type] = $this->grabToken(self::TOKEN_ENTITY_NAME);
                 break;
-            case self::KEYWORD_DELETE:    // passthrough
-            case self::KEYWORD_UNDELETE:  // passthrough
-            case self::KEYWORD_DESCRIBE:  // passthrough
+            case self::KEYWORD_DESCRIBE:
+                $result[$type] = $this->grabToken(self::TOKEN_ENTITY_NAME);
+                break;
             default:
                 $this->throwException("Invalid query type");
                 break;
@@ -282,7 +284,7 @@ class Parser {
         // WHERE clause check
         switch ($type) {
             case self::KEYWORD_SELECT:    // passthrough
-            case self::KEYWORD_INSERT:    // passthrough
+            case self::KEYWORD_INSERT:
                 // WHERE clause is optional
                 if ($this->grabString(self::KEYWORD_WHERE, true)) {
                     $this->grabWhitespace(1);
@@ -296,7 +298,7 @@ class Parser {
                 $result[self::KEYWORD_WHERE] = $this->grabToken(self::TOKEN_WHERES);
                 break;
             case self::KEYWORD_DELETE:    // passthrough
-            case self::KEYWORD_UNDELETE:  // passthrough
+            case self::KEYWORD_UNDELETE:
             default:
                 $cursor = $this->cursor;
                 if ($this->grabString(self::KEYWORD_WHERE, true)) {
@@ -325,7 +327,7 @@ class Parser {
             case self::KEYWORD_SELECT:    // passthrough
             case self::KEYWORD_UPDATE:    // passthrough
             case self::KEYWORD_DELETE:    // passthrough
-            case self::KEYWORD_UNDELETE:  // passthrough
+            case self::KEYWORD_UNDELETE:
             default:
                 $cursor = $this->cursor;
                 if ($this->grabString(self::KEYWORD_VALUES, true)) {
@@ -354,7 +356,7 @@ class Parser {
             case self::KEYWORD_SELECT:    // passthrough
             case self::KEYWORD_INSERT:    // passthrough
             case self::KEYWORD_DELETE:    // passthrough
-            case self::KEYWORD_UNDELETE:  // passthrough
+            case self::KEYWORD_UNDELETE:
             default:
                 $cursor = $this->cursor;
                 if ($this->grabString(self::KEYWORD_SET, true)) {
@@ -383,7 +385,7 @@ class Parser {
                 break;
             case self::KEYWORD_SELECT:    // passthrough
             case self::KEYWORD_DELETE:    // passthrough
-            case self::KEYWORD_UNDELETE:  // passthrough
+            case self::KEYWORD_UNDELETE:
             default:
                 $cursor = $this->cursor;
                 if ($this->grabString(self::KEYWORD_ASSOCIATE, true)) {
@@ -413,10 +415,39 @@ class Parser {
             case self::KEYWORD_SELECT:    // passthrough
             case self::KEYWORD_INSERT:    // passthrough
             case self::KEYWORD_DELETE:    // passthrough
-            case self::KEYWORD_UNDELETE:  // passthrough
+            case self::KEYWORD_UNDELETE:
             default:
                 $cursor = $this->cursor;
                 if ($this->grabString(self::KEYWORD_DISASSOCIATE, true)) {
+                    $this->setCursor($cursor);
+                    $this->throwException("Syntax error");
+                }
+                // Whitespace was taken before the DISASSOCIATE was checked, return this for the next
+                // token check as it will require whitespace before it
+                $this->returnWhitespace();
+                break;
+        }
+
+        // Expect whitespace after the last token (return any whitespace, and then grab it to make sure it is there)
+        $this->returnWhitespace();
+        $this->grabWhitespace(1);
+
+        // ORDER clause check
+        switch ($type) {
+            case self::KEYWORD_SELECT:
+                // ORDER clause is optional
+                if ($this->grabString(self::KEYWORD_ORDER, true)) {
+                    $this->grabWhitespace(1);
+                    $result[self::KEYWORD_ORDER] = $this->grabToken(self::TOKEN_ORDERS);
+                }
+                break;
+            case self::KEYWORD_UPDATE:    // passthrough
+            case self::KEYWORD_INSERT:    // passthrough
+            case self::KEYWORD_DELETE:    // passthrough
+            case self::KEYWORD_UNDELETE:
+            default:
+                $cursor = $this->cursor;
+                if ($this->grabString(self::KEYWORD_ORDER, true)) {
                     $this->setCursor($cursor);
                     $this->throwException("Syntax error");
                 }
