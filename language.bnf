@@ -95,13 +95,13 @@
 ; SHOW
 <show>          ::= "SHOW" <shows> ;
 
-<shows>         ::= <showrp> ["," <showrs>] ;
+<shows>         ::= <showi> ["," <shows>] ;
 
-<showrs>        ::= <showr> ["," <showrs>] ;
+<showi>         ::= <showschema> | <shownamespace> ;
 
-<showrp>        ::= <showr> ["PAGE" <posinteger>] ;
+<showschema>    ::= <posinteger> <entityname> ["PAGE" <posinteger>] ;
 
-<showr>         ::= <posinteger> <namespace> ;
+<shownamespace> ::= <posinteger> <namespace> ;
 
 
 ; Columns, locations, and namespaces

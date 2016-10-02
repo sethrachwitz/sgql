@@ -33,6 +33,10 @@ class Parser {
     const TOKEN_ORDER_BY = 'orderBy';
     const TOKEN_ORDER_DIRECTION = 'orderDirection';
 
+    const KEYWORD_PAGE = 'PAGE';
+    const TOKEN_SHOWS = 'shows';
+    const TOKEN_SHOW_I = 'showI';
+
     // Graphs
     const TOKEN_LOCATION_GRAPH = 'locationGraph';
     const TOKEN_LOCATION_GRAPH_I = 'locationGraphI';
@@ -73,6 +77,7 @@ class Parser {
     const TOKEN_VALUE = 'value';
     const TOKEN_PARAMETER = 'parameter';
 
+    const TOKEN_POSITIVE_INTEGER = 'positiveInteger';
     const TOKEN_INTEGER = 'integer';
     const TOKEN_DOUBLE = 'double';
     const TOKEN_STRING = 'string';
@@ -802,6 +807,79 @@ class Parser {
         ];
     }
 
+    private function showsToken() {
+        $token1 = $this->grabToken(self::TOKEN_SHOW_I);
+
+        try {
+            $this->grabWhitespace();
+            $this->grabString(",");
+        } catch (Exception $e) {
+            // No other comparisons to see here
+            $this->returnWhitespace();
+            return [$token1];
+        }
+
+        $this->grabWhitespace(1);
+
+        $token2 = $this->grabToken(self::TOKEN_SHOWS);
+
+        return array_merge([$token1], $token2);
+    }
+
+    private function showIToken() {
+        $token1 = $this->grabToken(self::TOKEN_POSITIVE_INTEGER);
+
+        $this->grabWhitespace(1);
+
+        $token2 = $this->grabToken(self::TOKEN_NAMESPACE);
+
+        if (sizeof($token2) > 1) {
+            return [
+                'type' => self::TOKEN_SHOW_I,
+                'records' => $token1,
+                self::TOKEN_NAMESPACE => $token2,
+            ];
+        }
+
+        // Namespace is only one schema
+        $token2 = $token2[0];
+
+        $cursor = $this->cursor;
+
+        // Check to see if there could be a PAGE clause
+        try {
+            $this->grabWhitespace(1);
+        } catch (Exception $e) {
+            // No whitespace, so there can't possibly be a PAGE clause
+            return [
+                'type' => self::TOKEN_SHOW_I,
+                'records' => $token1,
+                self::TOKEN_SCHEMA => $token2,
+            ];
+        }
+
+        if ($this->grabString(self::KEYWORD_PAGE, true)) {
+            $this->grabWhitespace(1);
+
+            $token3 = $this->grabToken(self::TOKEN_POSITIVE_INTEGER);
+
+            return [
+                'type' => self::TOKEN_SHOW_I,
+                'records' => $token1,
+                self::TOKEN_SCHEMA => $token2,
+                'page' => $token3,
+            ];
+        } else {
+            $this->setCursor($cursor);
+
+            return [
+                'type' => self::TOKEN_SHOW_I,
+                'records' => $token1,
+                self::TOKEN_SCHEMA => $token2,
+            ];
+        }
+    }
+
     private function columnCompareToken() {
         $token1 = $this->grabToken(self::TOKEN_COLUMN);
 
@@ -1057,6 +1135,21 @@ class Parser {
             }
         }
 
+        return $token1;
+    }
+
+    private function positiveIntegerToken() {
+        $cursor = $this->cursor;
+        $token1 = $this->grabToken(self::TOKEN_INTEGER);
+
+        $value = (int)$token1['value'];
+
+        if ($value <= 0) {
+            $this->setCursor($cursor);
+            $this->throwException("Integer must be positive");
+        }
+
+        $token1['type'] = self::TOKEN_POSITIVE_INTEGER;
         return $token1;
     }
 
