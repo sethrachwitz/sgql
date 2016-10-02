@@ -456,7 +456,7 @@ class Parser {
                     $this->setCursor($cursor);
                     $this->throwException("Syntax error");
                 }
-                // Whitespace was taken before the VALUES was checked, return this for the next
+                // Whitespace was taken before the ORDER was checked, return this for the next
                 // token check as it will require whitespace before it
                 $this->returnWhitespace();
                 break;
