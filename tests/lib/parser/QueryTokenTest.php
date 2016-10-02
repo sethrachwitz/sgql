@@ -21,6 +21,15 @@ class QueryTokenTest extends Parser_TestCase {
         $this->assertEquals($expected, $result);
     }
 
+    public function testValidSelectWithWhereOrder() {
+        require 'fixtures/validSelectWithWhereOrder1.php';
+
+        $parser = new Parser($input, Parser::TOKEN_QUERY);
+        $result = $parser->getParsed();
+
+        $this->assertEquals($expected, $result);
+    }
+
     public function invalidSelectProvider() {
         return [
             ['SELECT`tests`',               'Whitespace expected',      6],

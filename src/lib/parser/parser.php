@@ -28,6 +28,11 @@ class Parser {
     const TOKEN_ASSOCIATES = 'associates';
     const TOKEN_COLUMN_COMPARE = 'columnCompare';
 
+    const KEYWORD_ORDER = 'ORDER';
+    const TOKEN_ORDERS = 'orders';
+    const TOKEN_ORDER_BY = 'orderBy';
+    const TOKEN_ORDER_DIRECTION = 'orderDirection';
+
     // Graphs
     const TOKEN_LOCATION_GRAPH = 'locationGraph';
     const TOKEN_LOCATION_GRAPH_I = 'locationGraphI';
@@ -736,6 +741,65 @@ class Parser {
         $token2 = $this->grabToken(self::TOKEN_ASSOCIATES);
 
         return array_merge([$token1], $token2);
+    }
+
+    private function ordersToken() {
+        $token1 = $this->grabToken(self::TOKEN_ORDER_BY);
+
+        try {
+            $this->grabWhitespace();
+            $this->grabString(",");
+        } catch (Exception $e) {
+            // No other comparisons to see here
+            $this->returnWhitespace();
+            return [$token1];
+        }
+
+        $this->grabWhitespace(1);
+
+        $token2 = $this->grabToken(self::TOKEN_ORDERS);
+
+        return array_merge([$token1], $token2);
+    }
+
+    private function orderByToken() {
+        $token1 = $this->grabToken(self::TOKEN_NAMESPACE);
+
+        $this->grabWhitespace(1);
+
+        $this->grabString("BY");
+
+        $this->grabWhitespace(1);
+
+        $token2 = $this->grabToken(self::TOKEN_ENTITY_NAME);
+
+        $this->grabWhitespace(1);
+
+        $token3 = $this->grabToken(self::TOKEN_ORDER_DIRECTION);
+
+        return [
+            'type' => self::TOKEN_ORDER_BY,
+            self::TOKEN_NAMESPACE => $token1,
+            self::TOKEN_ENTITY_NAME => $token2,
+            self::TOKEN_ORDER_DIRECTION => $token3,
+        ];
+    }
+
+    private function orderDirectionToken() {
+        $cursor = $this->cursor;
+
+        $token1 = $this->grabRegex('[A-Z]+', false);
+
+        if ($token1['value'] != 'ASC' && $token1['value'] != 'DESC') {
+            $this->setCursor($cursor);
+            $this->throwException("Invalid order direction");
+        }
+
+        return [
+            'type' => self::TOKEN_ORDER_DIRECTION,
+            'value' => $token1['value'],
+            'location' => $token1['location'],
+        ];
     }
 
     private function columnCompareToken() {
