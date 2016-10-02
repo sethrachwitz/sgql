@@ -302,14 +302,14 @@ class Parser {
                     $result[self::KEYWORD_WHERE] = $this->grabToken(self::TOKEN_WHERES);
                 }
                 break;
-            case self::KEYWORD_UPDATE:
+            case self::KEYWORD_UPDATE:    // passthrough
+            case self::KEYWORD_DELETE:    // passthrough
+            case self::KEYWORD_UNDELETE:
                 // WHERE clause is not optional
                 $this->grabString(self::KEYWORD_WHERE);
                 $this->grabWhitespace(1);
                 $result[self::KEYWORD_WHERE] = $this->grabToken(self::TOKEN_WHERES);
                 break;
-            case self::KEYWORD_DELETE:    // passthrough
-            case self::KEYWORD_UNDELETE:
             default:
                 $cursor = $this->cursor;
                 if ($this->grabString(self::KEYWORD_WHERE, true)) {
