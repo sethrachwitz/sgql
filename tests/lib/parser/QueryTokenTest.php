@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class QueryTokenTest extends Parser_TestCase {
@@ -59,7 +61,7 @@ class QueryTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_QUERY);
             $this->fail("Expected invalid select exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $message,
                 'cursor' => $cursor,
@@ -106,7 +108,7 @@ class QueryTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_QUERY);
             $this->fail("Expected invalid insert exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $message,
                 'cursor' => $cursor,
@@ -151,7 +153,7 @@ class QueryTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_QUERY);
             $this->fail("Expected invalid update exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $message,
                 'cursor' => $cursor,

@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class OrdersTokenTest extends Parser_TestCase {
@@ -28,7 +30,7 @@ class OrdersTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_ORDERS);
             $this->fail("Expected invalid orders exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $message,
                 'cursor' => $cursor,
@@ -54,7 +56,7 @@ class OrdersTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_ORDERS);
             $this->fail("Expected invalid orders exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => "Expected 'BY'",
                 'cursor' => 40,

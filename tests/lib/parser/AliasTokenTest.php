@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class AliasTokenTest extends Parser_TestCase {
@@ -46,7 +48,7 @@ class AliasTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_ALIAS);
             $this->fail("Expected invalid alias exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $exception,
                 'cursor' => $cursor,

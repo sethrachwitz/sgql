@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class WheresTokenTest extends Parser_TestCase {
@@ -36,7 +38,7 @@ class WheresTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_WHERES);
             $this->fail("Expected invalid wheres exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $message,
                 'cursor' => $cursor,
@@ -62,7 +64,7 @@ class WheresTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_WHERES);
             $this->fail("Expected invalid wheres exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => "Expected ':('",
                 'cursor' => 81,

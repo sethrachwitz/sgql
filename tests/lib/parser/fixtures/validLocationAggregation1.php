@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = 'MIN(`schema1`:`col1`)';
 
 $expected = [

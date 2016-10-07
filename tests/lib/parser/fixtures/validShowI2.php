@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = '10 customers.orders';
 
 $expected = [

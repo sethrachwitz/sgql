@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = "UPDATE `customers` WHERE `customers`:(id == 4) SET vip = true ASSOCIATE `orders`:`id` == 1 DISASSOCIATE `orders`:`id` == 2";
 
 $expected = [

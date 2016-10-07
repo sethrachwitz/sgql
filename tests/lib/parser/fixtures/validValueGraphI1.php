@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = '12,"string",`schema1`:[12.99,?param]';
 
 $expected = [

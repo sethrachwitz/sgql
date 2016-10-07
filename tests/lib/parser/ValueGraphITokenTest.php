@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class ValueGraphITokenTest extends Parser_TestCase {
@@ -30,7 +32,7 @@ class ValueGraphITokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_VALUE_GRAPH_I);
             $this->fail("Expected invalid value graph I exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $message,
                 'cursor' => $cursor,
@@ -56,7 +58,7 @@ class ValueGraphITokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_VALUE_GRAPH_I);
             $this->fail("Expected invalid value graph I exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => 'Invalid entity name or value',
                 'cursor' => 10,

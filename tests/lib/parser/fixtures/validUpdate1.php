@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = "UPDATE `customers` WHERE `customers`:(id == 4) SET vip = true";
 
 $expected = [

@@ -9,7 +9,7 @@ $query = "SELECT `customers`:[`id`,`name`,`orders`:[`id`,`cost`,`shipped`],SUM(`
 
 echo "Query:\n".$query."\n\n";
 
-$parser = new Parser($query);
+$parser = new SGQL\Parser($query);
 
 echo "Result:\n";
 print_r($parser->getParsed());

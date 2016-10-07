@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class AggregationFunctionNameTokenTest extends Parser_TestCase {
@@ -33,7 +35,7 @@ class AggregationFunctionNameTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_AGGREGATION_FUNCTION_NAME);
             $this->fail("Expected invalid aggregation function exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => 'Invalid aggregation function',
                 'cursor' => 0,
@@ -60,7 +62,7 @@ class AggregationFunctionNameTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_AGGREGATION_FUNCTION_NAME);
             $this->fail("Expected invalid aggregation function exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => 'Invalid aggregation function',
                 'cursor' => 0,

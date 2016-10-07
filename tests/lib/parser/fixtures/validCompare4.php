@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = 'SUM(`orders`:cost) > 200';
 
 $expected = [

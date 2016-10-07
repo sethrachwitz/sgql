@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = 'orders:cost > 19.4, orders:shipped == true';
 
 $expected = [

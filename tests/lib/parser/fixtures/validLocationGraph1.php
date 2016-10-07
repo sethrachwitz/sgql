@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = '`customers`:[`column1`,`schema1`:[s1col1,COUNT(`schema2`) AS schema2count, SUM(`schema2`:`s2col1`) AS s2col1sum], `column2`, MAX(`test`:`col`) AS maxcol]';
 
 $expected = [

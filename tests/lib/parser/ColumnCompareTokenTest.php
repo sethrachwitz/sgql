@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class ColumnCompareTokenTest extends Parser_TestCase {
@@ -28,7 +30,7 @@ class ColumnCompareTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_COLUMN_COMPARE);
             $this->fail("Expected invalid column compare exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $message,
                 'cursor' => $cursor,
@@ -54,7 +56,7 @@ class ColumnCompareTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_COLUMN_COMPARE);
             $this->fail("Expected invalid column compare exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => "Expected comparison operator",
                 'cursor' => 12,

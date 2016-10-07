@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = 'SELECT `customers`:[`id`,`name`,`orders`:[`id`,`cost`,`shipped`],SUM(`orders`:`cost`) AS totalcost]';
 
 $expected = [

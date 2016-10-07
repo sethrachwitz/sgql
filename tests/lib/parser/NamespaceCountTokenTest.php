@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class NamespaceCountTokenTest extends Parser_TestCase {
@@ -48,7 +50,7 @@ class NamespaceCountTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_NAMESPACE_COUNT);
             $this->fail("Expected invalid namespace count exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $message,
                 'cursor' => $cursor,
@@ -74,7 +76,7 @@ class NamespaceCountTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_NAMESPACE_COUNT);
             $this->fail("Expected invalid namespace count exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => 'Invalid entity name',
                 'cursor' => 6,

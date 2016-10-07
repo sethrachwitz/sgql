@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = '`schema1`.`schema2`.`schema3`:`column`';
 
 $expected = [

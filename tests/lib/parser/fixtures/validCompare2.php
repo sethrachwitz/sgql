@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = 'HAS(`orders`:`id` IN ?ids) == true';
 
 $expected = [

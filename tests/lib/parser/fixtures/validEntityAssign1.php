@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = '`cost` = ?param';
 
 $expected = [

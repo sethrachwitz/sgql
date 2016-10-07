@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class ShowITokenTest extends Parser_TestCase {
@@ -36,7 +38,7 @@ class ShowITokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_SHOW_I);
             $this->fail("Expected invalid show I exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $message,
                 'cursor' => $cursor,
@@ -62,7 +64,7 @@ class ShowITokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_SHOWS);
             $this->fail("Expected invalid show I exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => "Invalid entity name",
                 'cursor' => 13,

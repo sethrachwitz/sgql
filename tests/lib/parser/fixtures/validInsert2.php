@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = "INSERT `customers`:[name, company, orders:[cost, shipped]]
             VALUES `customers`:[\"Steve Jobs\", \"Apple\", `orders`:[?cost, false]]
             ASSOCIATE `orders`:`id` == 6";

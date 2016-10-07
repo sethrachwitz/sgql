@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class NamespaceTokenTest extends Parser_TestCase {
@@ -38,7 +40,7 @@ class NamespaceTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_NAMESPACE);
             $this->fail("Expected invalid namespace exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $message,
                 'cursor' => $cursor,
@@ -64,7 +66,7 @@ class NamespaceTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_NAMESPACE);
             $this->fail("Expected invalid namespace exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => 'Missing closing backtick',
                 'cursor' => 9,

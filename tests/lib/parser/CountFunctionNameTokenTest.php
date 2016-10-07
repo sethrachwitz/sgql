@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class CountFunctionNameTokenTest extends Parser_TestCase {
@@ -28,7 +30,7 @@ class CountFunctionNameTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_COUNT_FUNCTION_NAME);
             $this->fail("Expected invalid count function exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => 'Invalid count function',
                 'cursor' => 0,
@@ -55,7 +57,7 @@ class CountFunctionNameTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_COUNT_FUNCTION_NAME);
             $this->fail("Expected invalid count function exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => 'Invalid count function',
                 'cursor' => 0,

@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class ComparesTokenTest extends Parser_TestCase {
@@ -27,7 +29,7 @@ class ComparesTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_COMPARES);
             $this->fail("Expected invalid compares exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $message,
                 'cursor' => $cursor,
@@ -53,7 +55,7 @@ class ComparesTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_COMPARES);
             $this->fail("Expected invalid compares exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => "Whitespace expected",
                 'cursor' => 26,

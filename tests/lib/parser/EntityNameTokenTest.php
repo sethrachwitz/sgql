@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class EntityNameTokenTest extends Parser_TestCase {
@@ -62,7 +64,7 @@ class EntityNameTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_ENTITY_NAME);
             $this->fail("Expected invalid entity exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => 'Invalid entity name',
                 'cursor' => 0,
@@ -113,7 +115,7 @@ class EntityNameTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_ENTITY_NAME);
             $this->fail("Expected invalid entity exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => 'Invalid entity name',
                 'cursor' => 0,

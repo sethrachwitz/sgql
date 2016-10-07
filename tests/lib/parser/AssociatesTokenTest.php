@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class AssociatesTokenTest extends Parser_TestCase {
@@ -28,7 +30,7 @@ class AssociatesTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_ASSOCIATES);
             $this->fail("Expected invalid associates exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $message,
                 'cursor' => $cursor,
@@ -54,7 +56,7 @@ class AssociatesTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_ASSOCIATES);
             $this->fail("Expected invalid associates exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => "Invalid value",
                 'cursor' => 33,

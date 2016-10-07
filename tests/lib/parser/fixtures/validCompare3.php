@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = 'COUNT(`orders`) > 5';
 
 $expected = [

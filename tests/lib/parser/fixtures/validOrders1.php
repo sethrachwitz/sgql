@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = 'customers BY name ASC, customers.orders BY cost DESC';
 
 $expected = [

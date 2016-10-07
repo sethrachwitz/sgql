@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = '`customers`:["Steve Jobs",`orders`:[12.9 , false]]';
 
 $expected = [

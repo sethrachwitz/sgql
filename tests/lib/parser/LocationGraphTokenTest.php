@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class LocationGraphTokenTest extends Parser_TestCase {
@@ -29,7 +31,7 @@ class LocationGraphTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_LOCATION_GRAPH);
             $this->fail("Expected invalid location graph exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $message,
                 'cursor' => $cursor,
@@ -55,7 +57,7 @@ class LocationGraphTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_LOCATION_GRAPH);
             $this->fail("Expected invalid location graph exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => 'Invalid entity name',
                 'cursor' => 23,

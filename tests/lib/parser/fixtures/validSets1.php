@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = 'cost = 19.4, shipped = true';
 
 $expected = [

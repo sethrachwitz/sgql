@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class WhereCompareTokenTest extends Parser_TestCase {
@@ -27,7 +29,7 @@ class WhereCompareTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_WHERE_COMPARE);
             $this->fail("Expected invalid where compare exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $message,
                 'cursor' => $cursor,
@@ -53,7 +55,7 @@ class WhereCompareTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_WHERE_COMPARE);
             $this->fail("Expected invalid where compare exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => "Expected comparison operator",
                 'cursor' => 24,

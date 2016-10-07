@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = '`orders`:(cost >= 19.4 AND `id` IN ?ids)';
 
 $expected = [

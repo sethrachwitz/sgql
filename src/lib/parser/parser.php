@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 class Parser {
     // Keywords
     const TOKEN_QUERY = 'query';
@@ -136,7 +138,7 @@ class Parser {
             $actualCurrentString = substr($this->currentString, 0, -1);
         }
 
-        throw new Exception($message.' at "'.$actualCurrentString.'" (Index '.$this->cursor.')');
+        throw new \Exception($message.' at "'.$actualCurrentString.'" (Index '.$this->cursor.')');
     }
 
 
@@ -162,11 +164,11 @@ class Parser {
 
         $methodName = $token.'Token';
         if (is_null($token) || !method_exists($this, $methodName)) {
-            throw new Exception('Token '.$token.' does not exist');
+            throw new \Exception('Token '.$token.' does not exist');
         } else {
             try {
                 return call_user_func(array($this, $methodName), $options);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 if ($optional === true) {
                     $this->setCursor($cursor);
                     return false;
@@ -619,7 +621,7 @@ class Parser {
         try {
             $this->grabWhitespace();
             $this->grabString("AND");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // No other comparisons to see here
             $this->returnWhitespace();
             return [$token1];
@@ -656,7 +658,7 @@ class Parser {
         try {
             $this->grabWhitespace(1);
             $this->grabString("AND");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // No other comparisons to see here
             $this->returnWhitespace();
             return [$token1];
@@ -676,7 +678,7 @@ class Parser {
                 if (!$token1 = $this->grabToken(self::TOKEN_HAS_COMPARE, true)) {
                     try {
                         $token1 = $this->grabToken(self::TOKEN_ENTITY_NAME);
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         $this->throwException("Invalid location aggregation or entity name");
                     }
                 }
@@ -709,7 +711,7 @@ class Parser {
             if (!$token3 = $this->grabToken(self::TOKEN_VALUE, true)) {
                 try {
                     $token3 = $this->grabToken(self::TOKEN_PARAMETER);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     $this->throwException("Invalid value or parameter");
                 }
             }
@@ -729,7 +731,7 @@ class Parser {
         try {
             $this->grabWhitespace(0);
             $this->grabString(",");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // No other comparisons to see here
             $this->returnWhitespace();
             return [$token1];
@@ -766,7 +768,7 @@ class Parser {
         try {
             $this->grabWhitespace(0);
             $this->grabString(",");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // No other associates to see here
             $this->returnWhitespace();
             return [$token1];
@@ -785,7 +787,7 @@ class Parser {
         try {
             $this->grabWhitespace();
             $this->grabString(",");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // No other comparisons to see here
             $this->returnWhitespace();
             return [$token1];
@@ -844,7 +846,7 @@ class Parser {
         try {
             $this->grabWhitespace();
             $this->grabString(",");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // No other comparisons to see here
             $this->returnWhitespace();
             return [$token1];
@@ -880,7 +882,7 @@ class Parser {
         // Check to see if there could be a PAGE clause
         try {
             $this->grabWhitespace(1);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // No whitespace, so there can't possibly be a PAGE clause
             return [
                 'type' => self::TOKEN_SHOW_I,

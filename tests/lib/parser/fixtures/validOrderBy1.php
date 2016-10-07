@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = 'customers.orders BY cost DESC';
 
 $expected = [

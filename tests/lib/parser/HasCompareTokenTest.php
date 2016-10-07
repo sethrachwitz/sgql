@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class HasCompareTokenTest extends Parser_TestCase {
@@ -28,7 +30,7 @@ class HasCompareTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_HAS_COMPARE);
             $this->fail("Expected invalid has compare exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $message,
                 'cursor' => $cursor,
@@ -54,7 +56,7 @@ class HasCompareTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_HAS_COMPARE);
             $this->fail("Expected invalid has compare exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => "Expected ':'",
                 'cursor' => 10,

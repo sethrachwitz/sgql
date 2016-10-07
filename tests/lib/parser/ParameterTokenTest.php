@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class ParameterTokenTest extends Parser_TestCase {
@@ -41,7 +43,7 @@ class ParameterTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_PARAMETER);
             $this->fail("Expected invalid parameter exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => 'Invalid parameter name',
                 'cursor' => 0,

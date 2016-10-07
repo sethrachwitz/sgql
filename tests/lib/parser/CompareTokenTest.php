@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class CompareTokenTest extends Parser_TestCase {
@@ -55,7 +57,7 @@ class CompareTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_COMPARE);
             $this->fail("Expected invalid compare exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $message,
                 'cursor' => $cursor,
@@ -81,7 +83,7 @@ class CompareTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_COMPARE);
             $this->fail("Expected invalid compare exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => "Use of 'IN' is limited to non-aggregation comparisons",
                 'cursor' => 14,

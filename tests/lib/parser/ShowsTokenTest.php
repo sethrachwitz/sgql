@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class ShowsTokenTest extends Parser_TestCase {
@@ -27,7 +29,7 @@ class ShowsTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_SHOWS);
             $this->fail("Expected invalid shows exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => $message,
                 'cursor' => $cursor,
@@ -53,7 +55,7 @@ class ShowsTokenTest extends Parser_TestCase {
         try {
             $parser = new Parser($input, Parser::TOKEN_SHOWS);
             $this->fail("Expected invalid shows exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertExceptionMessageEquals([
                 'message' => "Integer must be positive",
                 'cursor' => 22,

@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = '`orders`:(cost >= 19.4 AND HAS(`customers`:`id` > 10) == true) AND `orders`.`customers`:(name == "Steve")`';
 
 $expected = [

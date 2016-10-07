@@ -1,5 +1,7 @@
 <?php
 
+namespace SGQL;
+
 $input = 'cost >= 19.4 AND HAS(`customers`:`id` IN ?ids) == true';
 
 $expected = [
