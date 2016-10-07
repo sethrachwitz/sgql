@@ -263,14 +263,13 @@ class Parser {
 
         $token = $this->grabRegex('[A-Z]+', false);
 
-        $this->grabWhitespace(1);
-
         $type = $token['value'];
 
         // Check that the query starts with a valid token
         switch ($type) {
             case self::KEYWORD_SELECT:    // passthrough
             case self::KEYWORD_INSERT:
+                $this->grabWhitespace(1);
                 $result[$type] = $this->grabToken(self::TOKEN_LOCATION_GRAPH,
                     ['canHaveAggregations' => ($type == self::KEYWORD_SELECT)]
                 );
@@ -278,9 +277,11 @@ class Parser {
             case self::KEYWORD_UPDATE:    // passthrough
             case self::KEYWORD_DELETE:    // passthrough
             case self::KEYWORD_UNDELETE:
+                $this->grabWhitespace(1);
                 $result[$type] = $this->grabToken(self::TOKEN_ENTITY_NAME);
                 break;
             case self::KEYWORD_DESCRIBE:
+                $this->grabWhitespace(1);
                 $result[$type] = $this->grabToken(self::TOKEN_ENTITY_NAME);
                 break;
             default:
