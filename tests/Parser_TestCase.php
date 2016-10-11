@@ -2,7 +2,7 @@
 
 namespace SGQL;
 
-include_once(dirname(__FILE__).'/../src/lib/parser/parser.php');
+include_once(dirname(__FILE__).'/../src/sgql/parser/parser.php');
 
 class Parser_TestCase extends \PHPUnit_Framework_TestCase {
     public function assertExceptionMessageEquals(array $expected, $actual) {
