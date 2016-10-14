@@ -68,6 +68,37 @@ class MySQL extends Query {
             if (sizeof($this->parts[self::PART_WHERE]) > 0) {
                 $sql .= ' '.self::PART_WHERE.' '.implode(' AND ', $this->parts[self::PART_WHERE]);
             }
+        } else if ($this->queryType === self::TYPE_INSERT) {
+            $sql .= 'INSERT ';
+
+            // Add INTO
+            $sql .= self::PART_INTO.' `'.$this->parts[self::PART_INTO].'` (';
+
+            // Add columns list
+            foreach ($this->parts[self::PART_COLUMNS] as $column) {
+                $sql .= '`'.$column.'`,';
+            }
+
+            $sql = substr($sql, 0, -1).') '.self::PART_VALUES.' ';
+
+            foreach ($this->parts[self::PART_VALUES] as $rowKey => $row) {
+                $sql .= '(';
+
+                foreach ($this->parts[self::PART_COLUMNS] as $columnKey => $column) {
+                    if (isset($row[$column])) {
+                        $placeholderName = 'r'.$rowKey.'c'.$columnKey;
+
+                        $sql .= ':r'.$rowKey.'c'.$columnKey.',';
+                        $this->data[$placeholderName] = $row[$column];
+                    } else {
+                        $sql .= 'NULL,';
+                    }
+                }
+
+                $sql = substr($sql, 0, -1).'),';
+            }
+
+            $sql = substr($sql, 0, -1);
         }
 
         return $sql.';';
