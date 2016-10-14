@@ -58,7 +58,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, $query->toString());
     }
 
-    public function testSelectLeftJoin() {
+    public function testSelectJoin() {
         $expected = 'SELECT `customers`.`id`,`customers`.`name`,`orders`.`id`,`orders`.`customer`,`orders`.`cost`,`orders`.`shipped` FROM `orders` LEFT JOIN `customers` ON customers.id = orders.customer;';
 
         $query = (new MySQL())
@@ -108,7 +108,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
                 ],
                 'orders' => [
                     'id',
-                    'cost'
+                    'cost',
                 ],
             ])
             ->from('orders')
@@ -118,7 +118,28 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, $query->toString());
     }
 
-    public function testRequiredClauses() {
+    public function testSelectJoinMultipleWhere() {
+        $expected = 'SELECT `customers`.`id`,`orders`.`id` AS `order_id`,`orders`.`cost` FROM `orders` LEFT JOIN `customers` ON customers.id = orders.customer WHERE cost > :cost AND order_id < 5;';
+
+        $query = (new MySQL())
+            ->select([
+                'customers' => [
+                    'id',
+                ],
+                'orders' => [
+                    'order_id' => 'id',
+                    'cost',
+                ],
+            ])
+            ->from('orders')
+            ->join('customers', 'customers.id = orders.customer', MySQL::LEFT_JOIN)
+            ->where('cost > :cost')
+            ->where('order_id < 5');
+
+        $this->assertEquals($expected, $query->toString());
+    }
+
+    public function testSelectRequiredClauses() {
         $query = (new MySQL())
             ->select([
                 'customers' => [
