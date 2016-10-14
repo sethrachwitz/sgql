@@ -223,7 +223,7 @@ SELECT `orders`:[`id`,`cost`,`shipped`,`customers`:[`id`,`name`]]
 
 Result:
 ```
-`orders`: [
+'orders': [
         {
                 'id': 5,
                 'cost': 77.42,
