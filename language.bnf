@@ -22,7 +22,7 @@
 <locationgraph> ::= <entityname>":[" <locationgraphi> "]" ;
 
 <locationgraphi>::= <entityname>":[" <locationgraphi> "]" ["," <locationgraphi>]
-                  | <entityname> ["," <locationgraphi>]
+                  | <entityname> [<alias>] ["," <locationgraphi>]
                   | <locationagg> ["," <locationgraphi>]
                   | <namespacecount> ["," <locationgraphi>]
                   ;

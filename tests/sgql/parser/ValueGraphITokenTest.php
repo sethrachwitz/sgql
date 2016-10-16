@@ -19,6 +19,7 @@ class ValueGraphITokenTest extends Parser_TestCase {
             ['12, `col^`',                  'Invalid entity name or value', 4],
             ['"string",`test`:["string]',   'Invalid entity name or value', 17],
             ['`test`:["string",]',          'Invalid entity name or value', 17],
+            ['`test` AS, `test2`',          "Expected ':['",                6],
             ['``:[]',                       'Invalid entity name or value', 0],
             [':[]',                         'Invalid entity name or value', 0],
             ['`test`:[`column`,]',          "Expected ':['",                16],

@@ -538,8 +538,8 @@ class Parser {
         } else if ($canHaveAggregations && ($token1 = $this->grabToken(self::TOKEN_NAMESPACE_COUNT, true, ['requireAlias' => true]))) {
             // <schemacount>
         } else if ($token1 = $this->grabToken(self::TOKEN_ENTITY_NAME)) {
-            // <entityname>:[ <locationgraphi> ]
             if (($token2 = $this->grabString(':[', true)) !== false) {
+                // <entityname>:[ <locationgraphi> ]
                 $this->grabWhitespace();
 
                 $token3 = $this->grabToken(self::TOKEN_LOCATION_GRAPH_I, false, $options);
@@ -549,6 +549,15 @@ class Parser {
 
                 // Nest the graph inside of the entity
                 $token1[self::TOKEN_LOCATION_GRAPH] = $token3;
+            } else {
+                // <entityname> [<alias>]
+                try {
+                    $this->grabWhitespace(1);
+                    $token2 = $this->grabToken(self::TOKEN_ALIAS);
+                    $token1[self::TOKEN_ALIAS] = $token2;
+                } catch (\Exception $e) {
+                    $this->returnWhitespace();
+                }
             }
         }
 
