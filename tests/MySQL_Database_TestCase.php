@@ -10,7 +10,6 @@ class MySQL_Database_TestCase extends \PHPUnit_Framework_TestCase {
     protected $fixture = [];
     private static $haltFixtureSetup = false;
 
-
     protected static $hosts = [
         [
             'host' => 'localhost',
