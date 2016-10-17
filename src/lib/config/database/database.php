@@ -6,11 +6,13 @@ include_once(dirname(__FILE__).'/host.php');
 
 class Database {
     private $hosts = [];
+    private $idKeyMap = [];
     private $cantConnect = [];
 
     function __construct(array $hosts) {
         foreach ($hosts as $key => $host) {
-            $this->hosts[$key] = new Host($key, @$host['host'], @$host['username'], @$host['password'], @$host['charset'], @$host['dbRegex']);
+            $this->hosts[] = new Host($key, @$host['host'], @$host['username'], @$host['password'], @$host['charset'], @$host['dbRegex']);
+            $this->idMap[] = $key;
         }
 
         if (sizeof($this->hosts) == 0) {
@@ -45,9 +47,11 @@ class Database {
     }
 
     public function cantConnect($id) {
-        if (array_key_exists($id, $hosts)) {
-            unset($hosts[$id]);
+        if (array_search($id, $this->idMap)) {
+            unset($this->hosts[array_search($id, $this->idMap)]);
             $this->cantConnect[] = $id;
+        } else {
+            return;
         }
 
         if (sizeof($this->hosts) == 0) {
