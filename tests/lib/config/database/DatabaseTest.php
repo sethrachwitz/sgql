@@ -2,6 +2,8 @@
 
 namespace SGQL\Lib\Config;
 
+include_once(dirname(__FILE__).'/../../../../src/lib/config/database/database.php');
+
 class DatabaseTest extends \PHPUnit_Framework_TestCase {
     private $basicHosts = [
         'login' => [
