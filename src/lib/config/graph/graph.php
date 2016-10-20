@@ -14,14 +14,20 @@ class Graph {
     private $relationships = [];
 
     function __construct($graph) {
+        if (!isset($graph['schemas']) || sizeof($graph['schemas']) == 0) {
+            throw new \Exception("No schemas defined");
+        }
+
         foreach ($graph['schemas'] as $name => $columns) {
             $this->schemas[$name] = new Schema($name, $columns);
         }
 
-        foreach ($graph['relationships'] as $relationship) {
-            if ($this->getSchema($relationship['parent']) && $this->getSchema($relationship['child'])) {
-                $this->relationships[$relationship['parent'].' '.$relationship['child']] =
-                    new Relationship($relationship['parent'], $relationship['child'], $relationship['type']);
+        if (isset($graph['relationships']) && sizeof($graph['relationships']) > 0) {
+            foreach ($graph['relationships'] as $relationship) {
+                if ($this->getSchema($relationship['parent']) && $this->getSchema($relationship['child'])) {
+                    $this->relationships[$relationship['parent'].' '.$relationship['child']] =
+                        new Relationship($relationship['parent'], $relationship['child'], $relationship['type']);
+                }
             }
         }
 
