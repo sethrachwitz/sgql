@@ -14,7 +14,6 @@
 <insert>        ::= "INSERT" <locationgraph> ;
 <update>        ::= "UPDATE" <entityname> ;
 <delete>        ::= "DELETE" <entityname> ;
-<undelete>      ::= "UNDELETE" <entityname> ;
 <describe>      ::= "DESCRIBE" <entityname> ;
 
 

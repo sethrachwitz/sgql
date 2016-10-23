@@ -9,7 +9,6 @@ class Parser {
     const KEYWORD_INSERT = 'INSERT';
     const KEYWORD_UPDATE = 'UPDATE';
     const KEYWORD_DELETE = 'DELETE';
-    const KEYWORD_UNDELETE = 'UNDELETE';
     const KEYWORD_DESCRIBE = 'DESCRIBE';
 
     const KEYWORD_WHERE = 'WHERE';
@@ -277,8 +276,7 @@ class Parser {
                 );
                 break;
             case self::KEYWORD_UPDATE:    // passthrough
-            case self::KEYWORD_DELETE:    // passthrough
-            case self::KEYWORD_UNDELETE:
+            case self::KEYWORD_DELETE:
                 $this->grabWhitespace(1);
                 $result[$type] = $this->grabToken(self::TOKEN_ENTITY_NAME);
                 break;
@@ -306,8 +304,7 @@ class Parser {
                 }
                 break;
             case self::KEYWORD_UPDATE:    // passthrough
-            case self::KEYWORD_DELETE:    // passthrough
-            case self::KEYWORD_UNDELETE:
+            case self::KEYWORD_DELETE:
                 // WHERE clause is not optional
                 $this->grabString(self::KEYWORD_WHERE);
                 $this->grabWhitespace(1);
@@ -340,8 +337,7 @@ class Parser {
                 break;
             case self::KEYWORD_SELECT:    // passthrough
             case self::KEYWORD_UPDATE:    // passthrough
-            case self::KEYWORD_DELETE:    // passthrough
-            case self::KEYWORD_UNDELETE:
+            case self::KEYWORD_DELETE:
             default:
                 $cursor = $this->cursor;
                 if ($this->grabString(self::KEYWORD_VALUES, true)) {
@@ -369,8 +365,7 @@ class Parser {
                 break;
             case self::KEYWORD_SELECT:    // passthrough
             case self::KEYWORD_INSERT:    // passthrough
-            case self::KEYWORD_DELETE:    // passthrough
-            case self::KEYWORD_UNDELETE:
+            case self::KEYWORD_DELETE:
             default:
                 $cursor = $this->cursor;
                 if ($this->grabString(self::KEYWORD_SET, true)) {
@@ -398,8 +393,7 @@ class Parser {
                 }
                 break;
             case self::KEYWORD_SELECT:    // passthrough
-            case self::KEYWORD_DELETE:    // passthrough
-            case self::KEYWORD_UNDELETE:
+            case self::KEYWORD_DELETE:
             default:
                 $cursor = $this->cursor;
                 if ($this->grabString(self::KEYWORD_ASSOCIATE, true)) {
@@ -428,8 +422,7 @@ class Parser {
                 break;
             case self::KEYWORD_SELECT:    // passthrough
             case self::KEYWORD_INSERT:    // passthrough
-            case self::KEYWORD_DELETE:    // passthrough
-            case self::KEYWORD_UNDELETE:
+            case self::KEYWORD_DELETE:
             default:
                 $cursor = $this->cursor;
                 if ($this->grabString(self::KEYWORD_DISASSOCIATE, true)) {
@@ -457,8 +450,7 @@ class Parser {
                 break;
             case self::KEYWORD_UPDATE:    // passthrough
             case self::KEYWORD_INSERT:    // passthrough
-            case self::KEYWORD_DELETE:    // passthrough
-            case self::KEYWORD_UNDELETE:
+            case self::KEYWORD_DELETE:
             default:
                 $cursor = $this->cursor;
                 if ($this->grabString(self::KEYWORD_ORDER, true)) {
@@ -486,8 +478,7 @@ class Parser {
                 break;
             case self::KEYWORD_UPDATE:    // passthrough
             case self::KEYWORD_INSERT:    // passthrough
-            case self::KEYWORD_DELETE:    // passthrough
-            case self::KEYWORD_UNDELETE:
+            case self::KEYWORD_DELETE:
             default:
                 $cursor = $this->cursor;
                 if ($this->grabString(self::KEYWORD_SHOW, true)) {
