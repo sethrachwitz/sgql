@@ -91,7 +91,7 @@ abstract class Query {
 
     protected function setQueryType($type) {
         if (!is_null($this->queryType)) {
-            throw new \Exception("Cannot redeclare query type");
+            throw new \Exception("Query type has already been set to ".$this->queryType);
         }
 
         if (!in_array($type, self::QUERY_TYPES)) {
