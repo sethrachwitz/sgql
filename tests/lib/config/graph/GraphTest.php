@@ -3,11 +3,11 @@
 namespace SGQL\Lib\Config;
 
 include_once(dirname(__FILE__).'/../../../../src/lib/config/graph/graph.php');
-include_once(dirname(__FILE__).'/../../../Graph_Config_TestCase.php');
+include_once(dirname(__FILE__).'/../../../Config_TestCase.php');
 
-class GraphTest extends Graph_Config_TestCase {
+class GraphTest extends Config_TestCase {
     public function testGraphSchemas() {
-        $graph = new Graph($this->graph);
+        $graph = new Graph(self::$config['graphs']['sgql_unittests_data_[1|2]']);
 
         $schema = $graph->getSchema('customers');
         $this->assertEquals('customers', $schema->getName());
@@ -15,7 +15,7 @@ class GraphTest extends Graph_Config_TestCase {
     }
 
     public function testGetNamespaceExists() {
-        $graph = new Graph($this->graph);
+        $graph = new Graph(self::$config['graphs']['sgql_unittests_data_[1|2]']);
 
         $namespace = [
             'customers',
@@ -41,7 +41,7 @@ class GraphTest extends Graph_Config_TestCase {
 
     public function testGetNamespaceDoesntExist() {
         // Test with closed graph
-        $graph = new Graph($this->graph);
+        $graph = new Graph(self::$config['graphs']['sgql_unittests_data_[1|2]']);
 
         $namespace = [
             'customers',
@@ -56,7 +56,7 @@ class GraphTest extends Graph_Config_TestCase {
         }
 
         // Now test with an open graph
-        $openGraph = $this->graph;
+        $openGraph = self::$config['graphs']['sgql_unittests_data_[1|2]'];
         $openGraph['mode'] = 'open';
 
         $graph = new Graph($openGraph);
