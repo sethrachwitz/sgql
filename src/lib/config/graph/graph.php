@@ -76,10 +76,6 @@ class Graph {
         }
     }
 
-    public function schemaColumnExists($schema, $column) {
-        return ($this->schemaExists($schema) && $this->getSchema($schema)->columnExists($column));
-    }
-
     public function namespaceExists(array $namespace) {
         try {
             $this->getNamespace($namespace);
