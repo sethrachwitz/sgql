@@ -1,6 +1,7 @@
-## Status of the project
+# Status of the project
+* [Parser](#parser)
 
-### Parser
+## Parser
 #### Clauses
 - [x] SELECT Clause
  - [x] Location graph
