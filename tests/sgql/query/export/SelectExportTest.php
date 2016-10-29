@@ -100,7 +100,7 @@ class SelectTest extends Config\Config_TestCase {
                     'customers' => [
                         'id',
                         'name',
-                        'orderCostSum' => 'COUNT(`orders`.`tags`)',
+                        'numOrders' => 'COUNT(`orders`.`tags`)',
                         'orders' => [
                             'id',
                             'price' => 'cost',
@@ -177,8 +177,8 @@ class SelectTest extends Config\Config_TestCase {
                     ],
                 ],
             ]);
-        
-        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, SUM(`orders`:`price`) AS `orderCostSum`,`orders`:[`id`,`cost` AS `price`,`customers`:[SUM(`orders`:`price`) AS `orderCostSum`]]]", self::$dataGraph, self::$driver);
+
+        $stringQuery = new Query("SELECT `customers`:[`id`,`name`,`orders`:[`id`,`cost` AS `price`,`customers`:[SUM(`orders`:`price`) AS `orderCostSum`]]]", self::$dataGraph, self::$driver);
     }
 
     public function testSelectFunctionUsingColumnNotBeingReturned() {
@@ -192,7 +192,7 @@ class SelectTest extends Config\Config_TestCase {
                 ],
             ]);
 
-        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, COUNT(`orders`) AS `numOrders`, SUM(`orders`:`cost`) AS `orderCostSum`,`orders`:[`id`,`cost` AS `price`]]", self::$dataGraph, self::$driver);
+        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, SUM(`orders`:`cost`) AS `orderCostSum`, COUNT(`orders`) AS `numOrders`]", self::$dataGraph, self::$driver);
 
         $expected = [
             'customers' => [
