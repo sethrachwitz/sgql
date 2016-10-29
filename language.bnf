@@ -4,7 +4,6 @@
                   | <update> <where> [<set>] <associate> [<disassociate>]
                   | <update> <where> [<set>] [<associate>] <disassociate>
                   | <delete> [<where>]
-                  | <undelete> [<where>]
                   | <describe>
                   ;
 
