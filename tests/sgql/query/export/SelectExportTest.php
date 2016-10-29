@@ -43,6 +43,182 @@ class SelectTest extends Config\Config_TestCase {
         $this->assertEquals($expected, $chainedQuery->export());
     }
 
+    public function testExportSelectWithFunctions() {
+        $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+            ->select([
+                'customers' => [
+                    'id',
+                    'name',
+                    'numOrders' => 'COUNT(`orders`)',
+                    'orderCostSum' => 'SUM(`orders`:`price`)',
+                    'orders' => [
+                        'id',
+                        'price' => 'cost',
+                    ],
+                ],
+            ]);
+
+        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, COUNT(`orders`) AS `numOrders`, SUM(`orders`:`price`) AS `orderCostSum`,`orders`:[`id`,`cost` AS `price`]]", self::$dataGraph, self::$driver);
+
+        $expected = [
+            'customers' => [
+                Query::PART_COLUMNS => [
+                    'id',
+                    'name',
+                    'numOrders' => [
+                        'function' => 'COUNT',
+                        'namespace' => [
+                            'orders',
+                        ],
+                    ],
+                    'orderCostSum' => [
+                        'function' => 'SUM',
+                        'namespace' => [
+                            'orders',
+                        ],
+                        'column' => 'price',
+                    ],
+                ],
+                'namespaces' => [
+                    'orders' => [
+                        Query::PART_COLUMNS => [
+                            'id',
+                            'price' => 'cost',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $chainedQuery->export());
+    }
+
+    public function testSelectFunctionInvalidNamespace() {
+        try {
+            $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+                ->select([
+                    'customers' => [
+                        'id',
+                        'name',
+                        'orderCostSum' => 'COUNT(`orders`.`tags`)',
+                        'orders' => [
+                            'id',
+                            'price' => 'cost',
+                        ],
+                    ],
+                ]);
+            $this->fail("Expected invalid namespace exception");
+        } catch (\Exception $e) {
+            $this->assertEquals("Invalid namespace 'orders.tags' for function 'COUNT(`orders`.`tags`)'", $e->getMessage());
+        }
+
+        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, COUNT(`orders`.`tags`) AS `numOrders`,`orders`:[`id`,`cost` AS `price`]]", self::$dataGraph, self::$driver);
+    }
+
+    public function testSelectFunctionInvalidColumn() {
+        try {
+            $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+                ->select([
+                    'customers' => [
+                        'id',
+                        'name',
+                        'orderCostSum' => 'SUM(`orders`:`cost`)', // Invalid because 'cost' was aliased to 'price'
+                        'orders' => [
+                            'id',
+                            'price' => 'cost',
+                        ],
+                    ],
+                ]);
+            $this->fail("Expected invalid column exception");
+        } catch (\Exception $e) {
+            $this->assertEquals("Invalid column 'cost' for function 'SUM(orders:cost)'", $e->getMessage());
+        }
+
+        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, SUM(`orders`:`cost`) AS `orderCostSum`,`orders`:[`id`,`cost` AS `price`]]", self::$dataGraph, self::$driver);
+    }
+
+    public function testSelectFunctionInvalidColumnManyNamespaces() {
+        try {
+            $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+                ->select([
+                    'customers' => [
+                        'id',
+                        'name',
+                        'orderCostSum' => 'SUM(`orders`:`price`)',
+                        'orders' => [
+                            'id',
+                            'price' => 'cost',
+                            'customers' => [
+                                'orderCostSum' => 'SUM(`orders`:`price`)' // Invalid because orders:price is only valid outside of this namespace
+                            ]
+                        ],
+                    ],
+                ]);
+            $this->fail("Expected invalid column exception");
+        } catch (\Exception $e) {
+            $this->assertEquals("Invalid column 'price' for function 'SUM(orders:price)'", $e->getMessage());
+        }
+
+        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, SUM(`orders`:`price`) AS `orderCostSum`,`orders`:[`id`,`cost` AS `price`,`customers`:[SUM(`orders`:`price`) AS `orderCostSum`]]]", self::$dataGraph, self::$driver);
+    }
+
+    public function testSelectFunctionNestedWithValidNonReturnedColumn() {
+        $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+            ->select([
+                'customers' => [
+                    'id',
+                    'name',
+                    'orders' => [
+                        'id',
+                        'price' => 'cost',
+                        'customers' => [
+                            'orderCostSum' => 'SUM(`orders`:`cost`)'
+                        ]
+                    ],
+                ],
+            ]);
+        
+        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, SUM(`orders`:`price`) AS `orderCostSum`,`orders`:[`id`,`cost` AS `price`,`customers`:[SUM(`orders`:`price`) AS `orderCostSum`]]]", self::$dataGraph, self::$driver);
+    }
+
+    public function testSelectFunctionUsingColumnNotBeingReturned() {
+        $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+            ->select([
+                'customers' => [
+                    'id',
+                    'name',
+                    'orderCostSum' => 'SUM(`orders`:`cost`)',
+                    'numOrders' => 'COUNT(`orders`)',
+                ],
+            ]);
+
+        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, COUNT(`orders`) AS `numOrders`, SUM(`orders`:`cost`) AS `orderCostSum`,`orders`:[`id`,`cost` AS `price`]]", self::$dataGraph, self::$driver);
+
+        $expected = [
+            'customers' => [
+                Query::PART_COLUMNS => [
+                    'id',
+                    'name',
+                    'numOrders' => [
+                        'function' => 'COUNT',
+                        'namespace' => [
+                            'orders',
+                        ],
+                    ],
+                    'orderCostSum' => [
+                        'function' => 'SUM',
+                        'namespace' => [
+                            'orders',
+                        ],
+                        'column' => 'cost',
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($chainedQuery->export(), $expected);
+    }
+
     public function testSelectColumnDoesNotExist() {
         try {
             $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))

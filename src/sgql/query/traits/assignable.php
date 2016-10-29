@@ -9,6 +9,7 @@ trait Assignable {
         $topLevelSchema = key($validated);
 
         $this->_assignColumns($validated[$topLevelSchema], [$topLevelSchema]);
+        $this->validateColumnsFunctionColumns();
     }
 
     private function _assignColumns(array $schema, array $namespace) {

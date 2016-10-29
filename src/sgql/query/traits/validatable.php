@@ -56,19 +56,51 @@ trait Validatable {
                 $result['namespaces'][$alias] = $this->_validateColumns($column, array_merge($namespace, [$alias]));
             } else {
                 $actualColumnName = (is_string($alias) ? $alias : $column);
-                $namespaceColumnName = implode('.', $namespace).":".$actualColumnName;
+                $actualNamespaceColumnName = implode('.', $namespace).":".$actualColumnName;
+                $namespaceColumnName = implode('.', $namespace).":".$column;
 
-                // Make sure the column is valid
-                    throw new \Exception("Column '".$namespaceColumnName."' does not exist");
-                } else if (array_key_exists($actualColumnName, $result['columns']) || in_array($actualColumnName, $result['columns'])) {
-                    throw new \Exception("The column name '".$namespaceColumnName."' has already been used");
+                // Make sure this alias / column name hasn't already been used
+                if (array_key_exists($actualColumnName, $result['columns']) || in_array($actualColumnName, $result['columns'])) {
+                    throw new \Exception("The column name '".$actualNamespaceColumnName."' has already been used");
                 }
 
-                if (is_string($alias)) {
-                    $result['columns'][$alias] = $column;
+                // Make sure the column is valid
                 if (!$this->validateColumnExists($namespace, $column, false)) {
+                    // If the column does not exist, this might be a function
+                    $function = null;
+                    try {
+                        $functionParser = new Parser($column, Parser::TOKEN_FUNCTION, ['requireAlias' => false]);
+                        $parsedFunction = $functionParser->getParsed();
+                        $function = $this->transformFunction($parsedFunction)[0];
+                        // Exception thrown if not a function
+                    } catch (\Exception $e) {
+                        // This column isn't a valid column, and it isn't a function, so don't do anything here
+                        // and just proceed as normal (exception will be thrown)
+                    }
+
+                    if (!is_null($function)) {
+                        // Valid function
+                        if (is_string($alias)) {
+                            // Valid alias for the function
+                            if ($this->validateFunction($function, $namespace, false)) {
+                                $result['columns'][$alias] = $function;
+                            } else {
+                                throw new \Exception("Invalid namespace '".implode('.', $function['namespace'])."' for function '".$column."'");
+                            }
+                        } else {
+                            // Valid function, but not a valid alias
+                            throw new \Exception("Function '".$column."' must have an alias");
+                        }
+                    } else {
+                        // Not a valid function or column
+                        throw new \Exception("Column '".$namespaceColumnName."' does not exist");
+                    }
                 } else {
-                    $result['columns'][] = $column;
+                    if (is_string($alias)) {
+                        $result['columns'][$alias] = $column;
+                    } else {
+                        $result['columns'][] = $column;
+                    }
                 }
             }
         }
@@ -78,6 +110,58 @@ trait Validatable {
         }
 
         return $result;
+    }
+
+    protected function validateColumnsFunctionColumns() {
+        // This should be run after columns have been assigned, to validate any functions that have columns,
+        // as that can't be done until all of the columns/aliases are assigned to the query array
+        $topLevelSchema = key($this->query);
+
+        $namespace = [$topLevelSchema];
+        $pointer = &$this->query[$topLevelSchema];
+
+        $this->_validateColumnsFunctionColumns($namespace, $pointer);
+    }
+
+    private function _validateColumnsFunctionColumns($namespace, $pointer) {
+        foreach ($pointer[self::PART_COLUMNS] as $column) {
+            if (is_array($column)) { // Is a function
+                $validFunctionColumn = $this->validateFunction($column, $namespace);
+
+                if (!$validFunctionColumn) {
+                    throw new \Exception("Invalid column '".$column['column']."' for function '".$column['function'].
+                        "(".implode('.', $column['namespace']).(isset($column['column']) ? (':'.$column['column']) : '').")'");
+                }
+            }
+        }
+
+        if (isset($pointer['namespaces'])) {
+            foreach ($pointer['namespaces'] as $schemaName => $schema) {
+                $schemaPointer = &$pointer['namespaces'][$schemaName];
+                $this->_validateColumnsFunctionColumns(array_merge($namespace, [$schemaName]), $schemaPointer);
+            }
+        } else {
+            return;
+        }
+    }
+
+    private function validateFunction(array $function, array $currentNamespace, $checkColumn = true) {
+        $fullNamespace = array_merge($currentNamespace, $function['namespace']);
+
+        if (isset($function['namespace'])) {
+            try {
+                $this->graph->getNamespace($fullNamespace);
+            } catch (\Exception $e) {
+                return false;
+            }
+
+            if ($checkColumn && isset($function['column'])) {
+                $exists = $this->validateColumnExists($fullNamespace, $function['column']);
+                return $exists;
+            }
+        }
+
+        return true;
     }
 
     private function validateColumnExists($namespace, $columnName, $pointer = null) {
