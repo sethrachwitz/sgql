@@ -21,7 +21,7 @@ class Query {
     const PART_COLUMNS = 'columns';
 
     private $parser;
-    private $query;
+    private $query = [];
 
     private $queryType;
     private $data = [];
@@ -29,10 +29,6 @@ class Query {
     // Comes from the SGQL parent creator
     private $graph;
     private $driver;
-
-    private $parts = [
-        self::PART_COLUMNS => [],
-    ];
 
     function __construct($query = null, Config\Graph $graph, Drivers\Driver $driver) {
         if (!is_null($query)) {

@@ -13,7 +13,7 @@ trait Validatable {
 
     protected function validateParts() {
         if ($this->queryType === self::TYPE_SELECT) {
-            if (sizeof($this->parts[self::PART_COLUMNS]) == 0) {
+            if (sizeof($this->query[self::PART_COLUMNS]) == 0) {
                 throw new \Exception("Missing columns");
             }
         }
