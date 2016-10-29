@@ -47,6 +47,7 @@ class Parser {
     const TOKEN_VALUE_GRAPH_I = 'valueGraphI';
 
     // Functions and their inputs
+    const TOKEN_FUNCTION = 'function';
     const TOKEN_LOCATION_AGGREGATION = 'locationAggregation';
     const TOKEN_NAMESPACE_COUNT = 'namespaceCount';
     const TOKEN_ALIAS = 'alias';
@@ -974,6 +975,21 @@ class Parser {
         }
 
         return $schemas;
+    }
+
+    private function functionToken($options) {
+        $requireAlias = false;
+        if (isset($options['requireAlias']) && $options['requireAlias'] === true) {
+            $requireAlias = true;
+        }
+
+        if ($token1 = $this->grabToken(self::TOKEN_NAMESPACE_COUNT, true, ['requireAlias' => $requireAlias])) {
+            return $token1;
+        } else if ($token1 = $this->grabToken(self::TOKEN_LOCATION_AGGREGATION, true, ['requireAlias' => $requireAlias])) {
+            return $token1;
+        } else {
+            throw new \Exception("Invalid function");
+        }
     }
 
     private function locationAggregationToken($options) {
