@@ -59,7 +59,7 @@
   - [x] Optional alias
  - [x] Aggregation function
  - [x] Count function
- - [ ] HAS function
+ - [ ] HAS function (future)
 - [x] Compare
 - [x] Value Graph
 - [x] SHOW schema (top level schema)
