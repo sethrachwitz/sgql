@@ -1,5 +1,21 @@
 # Status of the project
+* [SGQL Query Builder](#sgql-query-builder)
 * [Parser](#parser)
+
+## SGQL Query Builder
+#### Clause methods
+- [x] SELECT Clause
+
+#### Validation
+- [x] SELECT Clause
+ - [x] Namespaces
+ - [x] Columns
+ - [x] Functions
+- [x] Column/alias validation
+
+#### Assigning
+- [x] SELECT Clause (columns)
+
 
 ## Parser
 #### Clauses
