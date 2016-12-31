@@ -2,14 +2,45 @@
 
 namespace SGQL;
 
-use SGQL\Lib\Config as Config;
+use SGQL\Lib\Graph as Graph;
+
+use SGQL\Lib\Drivers\MySQL;
+use SGQL\MySQL_Database_TestCase;
 
 include_once(dirname(__FILE__).'/../../../../src/sgql.php');
 include_once(dirname(__FILE__).'/../../../../src/sgql/query/query.php');
+include_once(dirname(__FILE__).'/../../../MySQL_Database_TestCase.php');
 
-class SelectTest extends Config\Config_TestCase {
+class SelectExportTest extends MySQL_Database_TestCase {
+	protected $fixture = [
+		[
+			'default1Wireframe.sql',
+			'default1Data.sql'
+		],
+		true
+	];
+
+	private static $driver;
+	private static $graph;
+
+	public function setUp() {
+		parent::setUp();
+
+		self::$driver = new MySQL(self::$hosts);
+		self::$driver->useDatabase('sgql_unittests_data_1');
+
+		self::$graph = new Graph\Graph(self::$driver);
+		self::$graph->initialize();
+		$this->addAssociations();
+	}
+
+	public function addAssociations() {
+		self::$graph->addAssociation('customers', 'orders', Graph\Association::TYPE_MANY_TO_ONE);
+		self::$graph->addAssociation('orders', 'products', Graph\Association::TYPE_MANY_TO_MANY);
+	}
+
     public function testExportSelect() {
-        $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+		$chainedQuery = (new Query(null, self::$graph, self::$driver))
             ->select([
                 'orders' => [
                     'id',
@@ -21,7 +52,7 @@ class SelectTest extends Config\Config_TestCase {
                 ],
             ]);
 
-        $stringQuery = new Query("SELECT `orders`:[`id`,`cost` AS `price`,`customers`:[`id`,`name`]]", self::$dataGraph, self::$driver);
+        $stringQuery = new Query("SELECT `orders`:[`id`,`cost` AS `price`,`customers`:[`id`,`name`]]", self::$graph, self::$driver);
 
         $expected = [
             'orders' => [
@@ -44,7 +75,7 @@ class SelectTest extends Config\Config_TestCase {
     }
 
     public function testExportSelectWithFunctions() {
-        $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+		$chainedQuery = (new Query(null, self::$graph, self::$driver))
             ->select([
                 'customers' => [
                     'id',
@@ -58,7 +89,7 @@ class SelectTest extends Config\Config_TestCase {
                 ],
             ]);
 
-        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, COUNT(`orders`) AS `numOrders`, SUM(`orders`:`price`) AS `orderCostSum`,`orders`:[`id`,`cost` AS `price`]]", self::$dataGraph, self::$driver);
+        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, COUNT(`orders`) AS `numOrders`, SUM(`orders`:`price`) AS `orderCostSum`,`orders`:[`id`,`cost` AS `price`]]", self::$graph, self::$driver);
 
         $expected = [
             'customers' => [
@@ -94,8 +125,8 @@ class SelectTest extends Config\Config_TestCase {
     }
 
     public function testSelectFunctionInvalidNamespace() {
-        try {
-            $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+		try {
+			$chainedQuery = (new Query(null, self::$graph, self::$driver))
                 ->select([
                     'customers' => [
                         'id',
@@ -112,12 +143,12 @@ class SelectTest extends Config\Config_TestCase {
             $this->assertEquals("Invalid namespace 'orders.tags' for function 'COUNT(`orders`.`tags`)'", $e->getMessage());
         }
 
-        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, COUNT(`orders`.`tags`) AS `numOrders`,`orders`:[`id`,`cost` AS `price`]]", self::$dataGraph, self::$driver);
+        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, COUNT(`orders`.`tags`) AS `numOrders`,`orders`:[`id`,`cost` AS `price`]]", self::$graph, self::$driver);
     }
 
     public function testSelectFunctionInvalidColumn() {
-        try {
-            $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+		try {
+            $chainedQuery = (new Query(null, self::$graph, self::$driver))
                 ->select([
                     'customers' => [
                         'id',
@@ -134,36 +165,11 @@ class SelectTest extends Config\Config_TestCase {
             $this->assertEquals("Invalid column 'cost' for function 'SUM(orders:cost)'", $e->getMessage());
         }
 
-        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, SUM(`orders`:`cost`) AS `orderCostSum`,`orders`:[`id`,`cost` AS `price`]]", self::$dataGraph, self::$driver);
-    }
-
-    public function testSelectFunctionInvalidColumnManyNamespaces() {
-        try {
-            $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
-                ->select([
-                    'customers' => [
-                        'id',
-                        'name',
-                        'orderCostSum' => 'SUM(`orders`:`price`)',
-                        'orders' => [
-                            'id',
-                            'price' => 'cost',
-                            'customers' => [
-                                'orderCostSum' => 'SUM(`orders`:`price`)' // Invalid because orders:price is only valid outside of this namespace
-                            ]
-                        ],
-                    ],
-                ]);
-            $this->fail("Expected invalid column exception");
-        } catch (\Exception $e) {
-            $this->assertEquals("Invalid column 'price' for function 'SUM(orders:price)'", $e->getMessage());
-        }
-
-        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, SUM(`orders`:`price`) AS `orderCostSum`,`orders`:[`id`,`cost` AS `price`,`customers`:[SUM(`orders`:`price`) AS `orderCostSum`]]]", self::$dataGraph, self::$driver);
+        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, SUM(`orders`:`cost`) AS `orderCostSum`,`orders`:[`id`,`cost` AS `price`]]", self::$graph, self::$driver);
     }
 
     public function testSelectFunctionNestedWithValidNonReturnedColumn() {
-        $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+		$chainedQuery = (new Query(null, self::$graph, self::$driver))
             ->select([
                 'customers' => [
                     'id',
@@ -178,11 +184,11 @@ class SelectTest extends Config\Config_TestCase {
                 ],
             ]);
 
-        $stringQuery = new Query("SELECT `customers`:[`id`,`name`,`orders`:[`id`,`cost` AS `price`,`customers`:[SUM(`orders`:`price`) AS `orderCostSum`]]]", self::$dataGraph, self::$driver);
+        $stringQuery = new Query("SELECT `customers`:[`id`,`name`,`orders`:[`id`,`cost` AS `price`,`customers`:[SUM(`orders`:`price`) AS `orderCostSum`]]]", self::$graph, self::$driver);
     }
 
     public function testSelectFunctionUsingColumnNotBeingReturned() {
-        $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+		$chainedQuery = (new Query(null, self::$graph, self::$driver))
             ->select([
                 'customers' => [
                     'id',
@@ -192,7 +198,7 @@ class SelectTest extends Config\Config_TestCase {
                 ],
             ]);
 
-        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, SUM(`orders`:`cost`) AS `orderCostSum`, COUNT(`orders`) AS `numOrders`]", self::$dataGraph, self::$driver);
+        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, SUM(`orders`:`cost`) AS `orderCostSum`, COUNT(`orders`) AS `numOrders`]", self::$graph, self::$driver);
 
         $expected = [
             'customers' => [
@@ -219,30 +225,9 @@ class SelectTest extends Config\Config_TestCase {
         $this->assertEquals($chainedQuery->export(), $expected);
     }
 
-    public function testSelectColumnDoesNotExist() {
-        try {
-            $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
-                ->select([
-                    'orders' => [
-                        'id',
-                        'cost',
-                        'customers' => [
-                            'id',
-                            'country',
-                        ],
-                    ],
-                ]);
-            $this->fail("Expected column does not exist exception");
-        } catch (\Exception $e) {
-            $this->assertEquals("Column 'orders.customers:country' does not exist", $e->getMessage());
-        }
-
-        $stringQuery = new Query("SELECT `orders`:[`id`,`cost`,`customers`:[`id`,`country`]]", self::$dataGraph, self::$driver);
-    }
-
     public function testSelectNamespaceDoesNotExist() {
-        try {
-            $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+		try {
+            $chainedQuery = (new Query(null, self::$graph, self::$driver))
                 ->select([
                     'orders' => [
                         'id',
@@ -262,12 +247,12 @@ class SelectTest extends Config\Config_TestCase {
             $this->assertEquals("Namespace 'orders.customers.passports' does not exist", $e->getMessage());
         }
 
-        $stringQuery = new Query("SELECT `orders`:[`id`,`cost`,`customers`:[`id`,`name`,`passports`:[`id`,`date`]]]", self::$dataGraph, self::$driver);
+        $stringQuery = new Query("SELECT `orders`:[`id`,`cost`,`customers`:[`id`,`name`,`passports`:[`id`,`date`]]]", self::$graph, self::$driver);
     }
 
     public function testSelectColumnNameAlreadyUsed() {
-        try {
-            $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+		try {
+            $chainedQuery = (new Query(null, self::$graph, self::$driver))
                 ->select([
                     'orders' => [
                         'id',
@@ -286,12 +271,12 @@ class SelectTest extends Config\Config_TestCase {
             $this->assertEquals("The column name 'orders.customers:name' has already been used", $e->getMessage());
         }
 
-        $stringQuery = new Query("SELECT `orders`:[`id`,`cost`,`customers`:[`id`,`name`,`vip` AS `name`]]", self::$dataGraph, self::$driver);
+        $stringQuery = new Query("SELECT `orders`:[`id`,`cost`,`customers`:[`id`,`name`,`vip` AS `name`]]", self::$graph, self::$driver);
     }
 
     public function testSelectNoColumnsForSchema() {
-        try {
-            $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+		try {
+            $chainedQuery = (new Query(null, self::$graph, self::$driver))
                 ->select([
                     'orders' => [
                         'customers' => [
@@ -306,12 +291,12 @@ class SelectTest extends Config\Config_TestCase {
             $this->assertEquals("No columns specified for namespace 'orders'", $e->getMessage());
         }
 
-        $stringQuery = new Query("SELECT `orders`:[`customers`:[`id`,`name`]]", self::$dataGraph, self::$driver);
+        $stringQuery = new Query("SELECT `orders`:[`customers`:[`id`,`name`]]", self::$graph, self::$driver);
     }
 
     public function testSelectNoColumnsOrRelationshipsForSchema() {
-        try {
-            $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+		try {
+            $chainedQuery = (new Query(null, self::$graph, self::$driver))
                 ->select([
                     'orders' => [
                         'id',
@@ -327,12 +312,12 @@ class SelectTest extends Config\Config_TestCase {
             $this->assertEquals("Nothing is defined for namespace 'orders.customers'", $e->getMessage());
         }
 
-        $stringQuery = new Query("SELECT `orders`:[`customers`:[`id`,`name`]]", self::$dataGraph, self::$driver);
+        $stringQuery = new Query("SELECT `orders`:[`customers`:[`id`,`name`]]", self::$graph, self::$driver);
     }
 
     public function testSelectNoNamespaces() {
-        try {
-            $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+		try {
+            $chainedQuery = (new Query(null, self::$graph, self::$driver))
                 ->select([
 
                 ]);
@@ -346,8 +331,8 @@ class SelectTest extends Config\Config_TestCase {
     }
 
     public function testSelectEmptyNamespace() {
-        try {
-            $chainedQuery = (new Query(null, self::$dataGraph, self::$driver))
+		try {
+            $chainedQuery = (new Query(null, self::$graph, self::$driver))
                 ->select([
                     [
 

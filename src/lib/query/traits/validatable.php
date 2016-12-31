@@ -74,7 +74,7 @@ trait Validatable {
         $this->validateClauseQueryType([self::TYPE_SELECT]);
         if ( // Test that all of these options are not true
             !(is_string($table)) && // Join table with no alias
-            !(is_array($table) && sizeof($table) == 1 && is_string($table[0])) && // Join table with alias
+            !(is_array($table) && sizeof($table) == 1 && is_string($table[key($table)])) && // Join table with alias
             !($table instanceof Query) // Join table that is a subquery
         ) {
             throw new \Exception("Joined table is invalid");

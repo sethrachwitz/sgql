@@ -15,3 +15,10 @@ CREATE TABLE IF NOT EXISTS `orders` (
     `customer` INT UNSIGNED NULL,
     PRIMARY KEY (`id`)
 );
+
+CREATE TABLE IF NOT EXISTS `products` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(100) NOT NULL,
+    `price` DOUBLE NOT NULL,
+    PRIMARY KEY (`id`)
+);

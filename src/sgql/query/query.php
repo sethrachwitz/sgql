@@ -2,7 +2,7 @@
 
 namespace SGQL;
 
-use SGQL\Lib\Config as Config;
+use SGQL\Lib\Graph as Graph;
 use SGqL\Lib\Drivers as Drivers;
 
 include_once(dirname(__FILE__).'/traits/assignable.php');
@@ -30,7 +30,7 @@ class Query {
     private $graph;
     private $driver;
 
-    function __construct($query = null, Config\Graph $graph, Drivers\Driver $driver) {
+    function __construct($query = null, Graph\Graph $graph, Drivers\Driver $driver) {
         if (!is_null($query)) {
             if (!is_string($query)) {
                 throw new \Exception("Query must be a string");

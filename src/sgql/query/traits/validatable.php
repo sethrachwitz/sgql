@@ -64,44 +64,39 @@ trait Validatable {
                     throw new \Exception("The column name '".$actualNamespaceColumnName."' has already been used");
                 }
 
-                // Make sure the column is valid
-                if (!$this->validateColumnExists($namespace, $column, false)) {
-                    // If the column does not exist, this might be a function
-                    $function = null;
-                    try {
-                        $functionParser = new Parser($column, Parser::TOKEN_FUNCTION, ['requireAlias' => false]);
-                        $parsedFunction = $functionParser->getParsed();
-                        $function = $this->transformFunction($parsedFunction)[0];
-                        // Exception thrown if not a function
-                    } catch (\Exception $e) {
-                        // This column isn't a valid column, and it isn't a function, so don't do anything here
-                        // and just proceed as normal (exception will be thrown)
-                    }
+                // Check if this is a valid function
+				try {
+                	$functionParser = new Parser($column, Parser::TOKEN_FUNCTION, ['requireAlias' => false]);
+                	$parsedFunction = $functionParser->getParsed();
+                	$function = $this->transformFunction($parsedFunction)[0];
+				} catch (\Exception $e) {
+                	// Not a valid function
+					$function = null;
+				}
 
-                    if (!is_null($function)) {
-                        // Valid function
-                        if (is_string($alias)) {
-                            // Valid alias for the function
-                            if ($this->validateFunction($function, $namespace, false)) {
-                                $result['columns'][$alias] = $function;
-                            } else {
-                                throw new \Exception("Invalid namespace '".implode('.', $function['namespace'])."' for function '".$column."'");
-                            }
-                        } else {
-                            // Valid function, but not a valid alias
-                            throw new \Exception("Function '".$column."' must have an alias");
-                        }
-                    } else {
-                        // Not a valid function or column
-                        throw new \Exception("Column '".$namespaceColumnName."' does not exist");
-                    }
-                } else {
+                if (!is_null($function)) {
+					// Valid function
+					if (is_string($alias)) {
+						// Valid alias for the function
+						if ($this->validateFunction($function, $namespace, false)) {
+							$result['columns'][$alias] = $function;
+						} else {
+							throw new \Exception("Invalid namespace '".implode('.', $function['namespace'])."' for function '".$column."'");
+						}
+					} else {
+						// Valid function, but not a valid alias
+						throw new \Exception("Function '".$column."' must have an alias");
+					}
+                } else if ($this->validateColumnExists($namespace, $column, false)) {
                     if (is_string($alias)) {
                         $result['columns'][$alias] = $column;
                     } else {
                         $result['columns'][] = $column;
                     }
-                }
+                } else {
+                	// Not a valid function or column
+					throw new \Exception("Column '".$namespaceColumnName."' does not exist");
+				}
             }
         }
 
@@ -195,8 +190,7 @@ trait Validatable {
                 }
             }
 
-            // If we got to this point, the column isn't going to be returned in the query, but it might still exist in a schema
-            return $this->graph->getSchema($namespace[0])->columnExists($columnName);
+            return true; // Column might not actually exist, but the db driver will just throw an exception if that is the case
         } else { // Not the last schema, so make recursive call on the next schema
             // Pop of the current schema from the namespace
             array_shift($namespace);

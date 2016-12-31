@@ -3,6 +3,7 @@
 namespace SGQL\Lib\Config;
 
 use SGQL\Lib\Drivers as Drivers;
+use SGQL\Lib\Graph as Graph;
 
 class Config_TestCase extends \PHPUnit_Framework_TestCase {
     protected static $driver;
@@ -89,6 +90,7 @@ class Config_TestCase extends \PHPUnit_Framework_TestCase {
 
     public static function setUpBeforeClass() {
         self::$driver = new Drivers\MySQL(self::$config['hosts']);
-        self::$dataGraph = new Graph(self::$config['graphs']['sgql_unittests_data_[1|2]']);
+        self::$driver->useDatabase('sgql_unittests_data_1');
+        self::$dataGraph = new Graph\Graph(self::$driver);
     }
 }

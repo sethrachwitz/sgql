@@ -51,7 +51,9 @@ class MySQL extends Query {
                     $sql .= $join['type'].' ';
 
                     if (is_array($join['table']) && sizeof($join['table']) == 1) {
-                        $sql .= '`'.$join['table'].'` AS `'.key($join['table']).'`';
+                    	$alias = key($join['table']);
+                    	$tableName = $join['table'][$alias];
+                        $sql .= '`'.$tableName.'` AS `'.$alias.'`';
                     } else if (is_string($join['table'])) {
                         $sql .= '`'.$join['table'].'`';
                     } else if ($join['table'] instanceof Query) {
