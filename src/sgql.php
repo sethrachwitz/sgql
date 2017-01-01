@@ -6,7 +6,7 @@ include_once(dirname(__FILE__).'/sgql/query/query.php');
 include_once(dirname(__FILE__).'/sgql/parser/parser.php');
 include_once(dirname(__FILE__).'/sgql/executor/types/select.php');
 
-use SGQL\Lib\Config as Config;
+use SGQL\Lib\Graph as Graph;
 use SGQL\Lib\Drivers as Drivers;
 
 class SGQL {
@@ -25,7 +25,8 @@ class SGQL {
         }
 
         $this->driver->useDatabase($database);
-        $this->graph = new Config\Graph($this->driver);
+        $this->graph = new Graph\Graph($this->driver);
+
         if (isset($config['mode'])) {
         	$this->graph->setMode($config['mode']);
 		}
