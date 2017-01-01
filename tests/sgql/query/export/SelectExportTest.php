@@ -291,7 +291,7 @@ class SelectExportTest extends Graph_MySQL_Database_TestCase {
             $this->assertEquals("Nothing is defined for namespace 'orders.customers'", $e->getMessage());
         }
 
-        $stringQuery = new Query("SELECT `orders`:[`customers`:[`id`,`name`]]", self::$graph, self::$driver);
+        $stringQuery = new Query("SELECT `orders`:[`id`,`cost`,`customers`:[]]", self::$graph, self::$driver);
     }
 
     public function testSelectNoNamespaces() {
