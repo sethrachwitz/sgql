@@ -101,6 +101,7 @@ class Graph {
 
 			$tables = $this->driver->fetchAll("SHOW tables;");
 
+			$addTables = [];
 			foreach ($tables as $table) {
 				$tableName = $table[key($table)];
 				if (substr($tableName, 0, 5) != 'sgql_') {
