@@ -3,15 +3,13 @@
 namespace SGQL;
 
 use SGQL\Lib\Graph as Graph;
-
 use SGQL\Lib\Drivers\MySQL;
-use SGQL\MySQL_Database_TestCase;
 
 include_once(dirname(__FILE__).'/../../../../src/sgql.php');
 include_once(dirname(__FILE__).'/../../../../src/sgql/query/query.php');
-include_once(dirname(__FILE__).'/../../../MySQL_Database_TestCase.php');
+include_once(dirname(__FILE__).'/../../../Graph_MySQL_Database_TestCase.php');
 
-class SelectExportTest extends MySQL_Database_TestCase {
+class SelectExportTest extends Graph_MySQL_Database_TestCase {
 	protected $fixture = [
 		[
 			'default1Wireframe.sql',
@@ -19,25 +17,6 @@ class SelectExportTest extends MySQL_Database_TestCase {
 		],
 		true
 	];
-
-	private static $driver;
-	private static $graph;
-
-	public function setUp() {
-		parent::setUp();
-
-		self::$driver = new MySQL(self::$hosts);
-		self::$driver->useDatabase('sgql_unittests_data_1');
-
-		self::$graph = new Graph\Graph(self::$driver);
-		self::$graph->initialize();
-		$this->addAssociations();
-	}
-
-	public function addAssociations() {
-		self::$graph->addAssociation('customers', 'orders', Graph\Association::TYPE_MANY_TO_ONE);
-		self::$graph->addAssociation('orders', 'products', Graph\Association::TYPE_MANY_TO_MANY);
-	}
 
     public function testExportSelect() {
 		$chainedQuery = (new Query(null, self::$graph, self::$driver))
