@@ -6,7 +6,6 @@ use SGQL\Lib\Graph as Graph;
 use SGQL\Lib\Drivers\MySQL;
 
 include_once(dirname(__FILE__).'/../../../../src/sgql.php');
-include_once(dirname(__FILE__).'/../../../../src/sgql/query/query.php');
 include_once(dirname(__FILE__).'/../../../Graph_MySQL_Database_TestCase.php');
 
 class SelectExportTest extends Graph_MySQL_Database_TestCase {
@@ -291,7 +290,12 @@ class SelectExportTest extends Graph_MySQL_Database_TestCase {
             $this->assertEquals("Nothing is defined for namespace 'orders.customers'", $e->getMessage());
         }
 
-        $stringQuery = new Query("SELECT `orders`:[`id`,`cost`,`customers`:[]]", self::$graph, self::$driver);
+        try {
+			$stringQuery = new Query("SELECT `orders`:[`id`,`cost`,`customers`:[]]", self::$graph, self::$driver);
+			$this->fail("Expected invalid entity name exception");
+		} catch (\Exception $e) {
+			$this->assertEquals('Invalid entity name at "]]" (Index 42)', $e->getMessage());
+		}
     }
 
     public function testSelectNoNamespaces() {
