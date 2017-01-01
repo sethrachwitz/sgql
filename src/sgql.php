@@ -26,14 +26,13 @@ class SGQL {
 
         $this->driver->useDatabase($database);
         $this->graph = new Config\Graph($this->driver);
+        if (isset($config['mode'])) {
+        	$this->graph->setMode($config['mode']);
+		}
     }
 
     public function initialize() {
     	$this->graph->initialize();
-	}
-
-    public function setMode($mode) {
-    	$this->graph->setMode($mode);
 	}
 
     public function newQuery($query = null) {
