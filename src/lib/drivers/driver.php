@@ -74,6 +74,7 @@ abstract class Driver {
 
     abstract protected function open();
     abstract protected function close();
+    abstract public function beginTransaction();
     abstract public function rollback();
     abstract public function commit();
 
