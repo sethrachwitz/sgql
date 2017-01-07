@@ -204,8 +204,8 @@ class Graph {
 				],
 			])
 			->from('sgql_associations')
-			->join(['st1' => 'sgql_tables'], 'sgql_associations.parent_id = st1.name')
-			->join(['st2' => 'sgql_tables'], 'sgql_associations.child_id = st2.name');
+			->join(['st1' => 'sgql_tables'], 'sgql_associations.parent_id = st1.id')
+			->join(['st2' => 'sgql_tables'], 'sgql_associations.child_id = st2.id');
 
 		$associations = $this->driver->fetchAll($sgqlAssociationsQuery);
 
