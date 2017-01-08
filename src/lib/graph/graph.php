@@ -210,7 +210,7 @@ class Graph {
 		$associations = $this->driver->fetchAll($sgqlAssociationsQuery);
 
 		foreach ($associations as $association) {
-			$this->associations[$association['parent_name'].' '.$association['child_name']] = new Association($association['parent_name'], $association['child_name'], $association['type']);
+			$this->associations[$association['parent_name'].' '.$association['child_name']] = new Association($this->getSchema($association['parent_name']), $this->getSchema($association['child_name']), $association['type'], $association['id']);
 		}
 
 		$this->initialized = true;
@@ -230,19 +230,19 @@ class Graph {
         } else if (isset($this->associations[$schema2.' '.$schema1])) {
             return $this->associations[$schema2.' '.$schema1];
         } else if ($this->mode == 'open') {
-        	return $this->addAssociation($schema1, $schema2, Association::TYPE_MANY_TO_MANY);
+        	return $this->addAssociation($this->getSchema($schema1), $this->getSchema($schema2), Association::TYPE_MANY_TO_MANY);
         } else {
             throw new \Exception("Relationship between '".$schema1."' and '".$schema2."' was not found");
         }
     }
 
-    public function addAssociation($schema1, $schema2, $type) {
+    public function addAssociation(Schema $schema1, Schema $schema2, $type) {
     	if (!in_array($type, Association::ASSOCIATION_TYPES)) {
     		throw new \Exception("Invalid association type");
 		}
 
-		$schema1id = $this->getSchema($schema1)->getId();
-		$schema2id = $this->getSchema($schema2)->getId();
+		$schema1id = $schema1->getId();
+		$schema2id = $schema2->getId();
 
 		$insertAssociation = $this->driver->newQuery()
 			->insert('sgql_associations')
@@ -256,8 +256,8 @@ class Graph {
 
 		$this->driver->query($insertAssociation);
 
-		$association = new Association($schema1, $schema2, $type);
-		$this->associations[$schema1.' '.$schema2] = $association;
+		$association = new Association($schema1, $schema2, $type, $associationId);
+		$this->associations[$schema1->getName().' '.$schema2->getName()] = $association;
 
 		$this->flushCache();
 

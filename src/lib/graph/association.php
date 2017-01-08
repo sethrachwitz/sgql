@@ -22,4 +22,12 @@ class Association {
 
         $this->type = $type;
     }
+
+	public function getParent() {
+    	return $this->schema1;
+	}
+
+	public function getChild() {
+    	return $this->schema2;
+	}
 }

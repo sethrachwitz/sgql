@@ -14,7 +14,7 @@ class GraphTest extends MySQL_Database_TestCase {
 			'default1Wireframe.sql',
 			'default1Data.sql'
 		],
-		false
+		true
 	];
 
     public function testGraphSchemas() {
@@ -43,8 +43,12 @@ class GraphTest extends MySQL_Database_TestCase {
 		$graph = new Graph($driver);
 		$graph->initialize();
 
-		$graph->addAssociation('customers', 'orders', Association::TYPE_MANY_TO_ONE);
-		$graph->addAssociation('orders', 'products', Association::TYPE_MANY_TO_MANY);
+		$customersSchema = $graph->getSchema('customers');
+		$ordersSchema = $graph->getSchema('orders');
+		$productsSchema = $graph->getSchema('products');
+
+		$graph->addAssociation($customersSchema, $ordersSchema, Association::TYPE_MANY_TO_ONE);
+		$graph->addAssociation($ordersSchema, $productsSchema, Association::TYPE_MANY_TO_MANY);
 
         $namespace = [
             'customers',
@@ -54,14 +58,16 @@ class GraphTest extends MySQL_Database_TestCase {
 
         $expected = [
             new Association (
-                'customers',
-                'orders',
-                Association::TYPE_MANY_TO_ONE
+            	$customersSchema,
+				$ordersSchema,
+                Association::TYPE_MANY_TO_ONE,
+				1
             ),
             new Association (
-                'orders',
-                'products',
-                Association::TYPE_MANY_TO_MANY
+            	$ordersSchema,
+				$productsSchema,
+                Association::TYPE_MANY_TO_MANY,
+				2
             ),
         ];
 
@@ -75,6 +81,9 @@ class GraphTest extends MySQL_Database_TestCase {
 		// Test with closed graph
         $graph = new Graph($driver);
         $graph->initialize();
+
+		$customersSchema = $graph->getSchema('customers');
+		$productsSchema = $graph->getSchema('products');
 
         $namespace = [
             'customers',
@@ -94,9 +103,10 @@ class GraphTest extends MySQL_Database_TestCase {
 
         $expected = [
             new Association (
-                'customers',
-                'products',
-                Association::TYPE_MANY_TO_MANY
+            	$customersSchema,
+				$productsSchema,
+                Association::TYPE_MANY_TO_MANY,
+				1
             )
         ];
 
