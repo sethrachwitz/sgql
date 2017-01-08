@@ -1,8 +1,8 @@
 <?php
 
-include_once("Graph_MySQL_Database_TestCase.php");
+include_once('MySQL_Database_TestCase.php');
 
-class SGQL_MySQL_Database_TestCase extends \SGQL\Graph_MySQL_Database_TestCase {
+class SGQL_MySQL_Database_TestCase extends SGQL\MySQL_Database_TestCase {
 	protected static $config = [
 		'database' => 'mysql',
 		'mode' => 'closed',
