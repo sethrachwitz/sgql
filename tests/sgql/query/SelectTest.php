@@ -154,4 +154,41 @@ class SelectTest extends SGQL_MySQL_Database_TestCase {
 
 		$this->assertEquals($expected, $result);
 	}
+
+	public function testSelectAliasedColumnName() {
+		$sgql = new SGQL(self::$config, self::$database);
+
+		$query = $sgql->newQuery()
+			->select([
+				'customers' => [
+					'id',
+					'customerName' => 'name',
+				]
+			]);
+
+		$expected = [
+			'customers' => [
+				[
+					'id' => 1,
+					'customerName' => 'Steve Jobs',
+				],
+				[
+					'id' => 2,
+					'customerName' => 'Larry Ellison',
+				],
+				[
+					'id' => 3,
+					'customerName' => 'Mark Zuckerburg',
+				],
+				[
+					'id' => 4,
+					'customerName' => 'Jack Dorsey',
+				],
+			]
+		];
+
+		$result = $sgql->query($query);
+
+		$this->assertEquals($expected, $result);
+	}
 }
