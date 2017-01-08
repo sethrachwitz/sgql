@@ -2,6 +2,7 @@
 
 include_once(dirname(__FILE__).'/lib/drivers/mysql.php');
 include_once(dirname(__FILE__).'/lib/graph/graph.php');
+include_once(dirname(__FILE__).'/lib/graph/association.php');
 include_once(dirname(__FILE__).'/sgql/query/query.php');
 include_once(dirname(__FILE__).'/sgql/parser/parser.php');
 include_once(dirname(__FILE__).'/sgql/executor/types/select.php');
@@ -42,4 +43,22 @@ class SGQL {
         }
         return new SGQL\Query($query, $this->graph, $this->driver);
     }
+
+    public function createAssociation($schema1, $type, $schema2) {
+    	switch ($type) {
+			case '-':
+				$type = SGQL\Lib\Graph\Association::TYPE_ONE_TO_ONE;
+				break;
+			case '<-':
+				$type = SGQL\Lib\Graph\Association::TYPE_MANY_TO_ONE;
+				break;
+			case '<->':
+				$type = SGQL\Lib\Graph\Association::TYPE_MANY_TO_MANY;
+				break;
+			default:
+				throw new \Exception("Invalid association type '".$type."'");
+		}
+
+    	return $this->graph->addAssociation($this->graph->getSchema($schema1), $this->graph->getSchema($schema2), $type);
+	}
 }
