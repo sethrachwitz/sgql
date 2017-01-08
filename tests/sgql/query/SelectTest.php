@@ -113,7 +113,6 @@ class SelectTest extends SGQL_MySQL_Database_TestCase {
 	}
 
 	public function testNamespaceSelectPrimaryColumnNotPartOfQuery() {
-
 		$sgql = new SGQL(self::$config, self::$database);
 
 		$query = $sgql->newQuery()
