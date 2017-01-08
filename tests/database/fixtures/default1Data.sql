@@ -2,7 +2,7 @@ USE sgql_unittests_data_1;
 
 INSERT INTO `customers` (`name`,`vip`) VALUES
     ('Steve Jobs', 0),
-    ('Larry Elison', 1),
+    ('Larry Ellison', 1),
     ('Mark Zuckerburg', 0),
     ('Jack Dorsey', 1)
 ;
