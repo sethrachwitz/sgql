@@ -329,4 +329,33 @@ class SelectExportTest extends Graph_MySQL_Database_TestCase {
 
         // Not possible to build a query string with an empty namespace
     }
+
+    public function testAliasingPrimaryColumn() {
+    	try {
+    		$chainedQuery = (new Query(null, self::$graph, self::$driver))
+				->select([
+					'customers' => [
+						'newId' => 'id',
+						'name',
+					],
+				]);
+		} catch (\Exception $e) {
+    		$this->assertEquals("The primary column for a schema cannot be aliased", $e->getMessage());
+		}
+	}
+
+	public function testUsingProtectedColumnName() {
+		try {
+			$chainedQuery = (new Query(null, self::$graph, self::$driver))
+				->select([
+					'customers' => [
+						'id',
+						'name',
+						'associated_id'
+					],
+				]);
+		} catch (\Exception $e) {
+			$this->assertEquals("'associated_id' is a protected column name for SGQL", $e->getMessage());
+		}
+	}
 }
