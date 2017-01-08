@@ -43,6 +43,14 @@ class Query {
         $this->driver = $driver;
     }
 
+    public function getDriver() {
+    	return $this->driver;
+	}
+
+	public function getGraph() {
+    	return $this->graph;
+	}
+
     public function updateDriver(Drivers\Driver $driver) {
         $this->driver = $driver;
     }
