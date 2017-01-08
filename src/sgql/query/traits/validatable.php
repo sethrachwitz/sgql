@@ -42,6 +42,7 @@ trait Validatable {
 
         // Will throw exception if the namespace doesn't exist, or if a schema doesn't exist
         $this->graph->getNamespace($namespace);
+        $schemaName = $namespace[sizeof($namespace) - 1];
 
         if (sizeof($columns) === 0) {
             throw new \Exception("Nothing is defined for namespace '".implode('.', $namespace)."'");
@@ -93,6 +94,10 @@ trait Validatable {
 					}
                 } else if ($this->validateColumnExists($namespace, $column, false)) {
                     if (is_string($alias)) {
+                    	$primaryColumn = $this->graph->getSchema($schemaName)->getPrimaryColumn();
+                    	if ($column == $primaryColumn) {
+                    		throw new \Exception("The primary column for a schema cannot be aliased");
+						}
                         $result['columns'][$alias] = $column;
                     } else {
                         $result['columns'][] = $column;
