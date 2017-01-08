@@ -64,6 +64,10 @@ trait Validatable {
                     throw new \Exception("The column name '".$actualNamespaceColumnName."' has already been used");
                 }
 
+                if ($actualColumnName == 'associated_id') {
+                	throw new \Exception("'associated_id' is a protected column name for SGQL");
+				}
+
                 // Check if this is a valid function
 				try {
                 	$functionParser = new Parser($column, Parser::TOKEN_FUNCTION, ['requireAlias' => false]);
