@@ -5,10 +5,13 @@ include_once(dirname(__FILE__).'/lib/graph/graph.php');
 include_once(dirname(__FILE__).'/lib/graph/association.php');
 include_once(dirname(__FILE__).'/sgql/query/query.php');
 include_once(dirname(__FILE__).'/sgql/parser/parser.php');
-include_once(dirname(__FILE__).'/sgql/executor/types/select.php');
+include_once(dirname(__FILE__).'/sgql/executor/executor.php');
 
 use SGQL\Lib\Graph as Graph;
 use SGQL\Lib\Drivers as Drivers;
+
+use SGQL\Query;
+use SGQL\Executor;
 
 class SGQL {
     const VERSION = 'a.0.1';
@@ -60,5 +63,10 @@ class SGQL {
 		}
 
     	return $this->graph->addAssociation($this->graph->getSchema($schema1), $this->graph->getSchema($schema2), $type);
+	}
+
+    public function query(Query $query) {
+		$executor = new Executor\Executor($query);
+		return $executor->execute();
 	}
 }
