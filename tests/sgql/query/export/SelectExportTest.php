@@ -243,7 +243,6 @@ class SelectExportTest extends Graph_MySQL_Database_TestCase {
                     ],
                 ]);
 
-                print_r($chainedQuery->export());
             $this->fail("Expected column name already used exception");
         } catch (\Exception $e) {
             $this->assertEquals("The column name 'orders.customers:name' has already been used", $e->getMessage());
