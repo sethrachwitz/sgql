@@ -50,6 +50,7 @@ class SelectExportTest extends Graph_MySQL_Database_TestCase {
         ];
 
         $this->assertEquals($expected, $chainedQuery->export());
+        $this->assertEquals($expected, $stringQuery->export());
     }
 
     public function testExportSelectWithFunctions() {
@@ -100,6 +101,7 @@ class SelectExportTest extends Graph_MySQL_Database_TestCase {
         ];
 
         $this->assertEquals($expected, $chainedQuery->export());
+		$this->assertEquals($expected, $stringQuery->export());
     }
 
     public function testSelectFunctionInvalidNamespace() {
@@ -123,7 +125,12 @@ class SelectExportTest extends Graph_MySQL_Database_TestCase {
             $this->assertEquals($expectedException, $e->getMessage());
         }
 
-        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, COUNT(`orders`.`tags`) AS `numOrders`,`orders`:[`id`,`cost` AS `price`]]", self::$graph, self::$driver);
+        try {
+			$stringQuery = new Query("SELECT `customers`:[`id`,`name`, COUNT(`orders`.`tags`) AS `numOrders`,`orders`:[`id`,`cost` AS `price`]]", self::$graph, self::$driver);
+			$this->fail("Expected invalid namespace exception");
+		} catch (\Exception $e) {
+			$this->assertEquals($expectedException, $e->getMessage());
+		}
     }
 
     public function testSelectFunctionInvalidColumn() {
@@ -147,7 +154,12 @@ class SelectExportTest extends Graph_MySQL_Database_TestCase {
             $this->assertEquals($expectedException, $e->getMessage());
         }
 
-        $stringQuery = new Query("SELECT `customers`:[`id`,`name`, SUM(`orders`:`cost`) AS `orderCostSum`,`orders`:[`id`,`cost` AS `price`]]", self::$graph, self::$driver);
+        try {
+			$stringQuery = new Query("SELECT `customers`:[`id`,`name`, SUM(`orders`:`cost`) AS `orderCostSum`,`orders`:[`id`,`cost` AS `price`]]", self::$graph, self::$driver);
+			$this->fail("Expected invalid column exception");
+		} catch (\Exception $e) {
+			$this->assertEquals($expectedException, $e->getMessage());
+		}
     }
 
     public function testSelectFunctionNestedWithValidNonReturnedColumn() {
@@ -231,7 +243,12 @@ class SelectExportTest extends Graph_MySQL_Database_TestCase {
             $this->assertEquals($expectedException, $e->getMessage());
         }
 
-        $stringQuery = new Query("SELECT `orders`:[`id`,`cost`,`customers`:[`id`,`name`,`passports`:[`id`,`date`]]]", self::$graph, self::$driver);
+        try {
+			$stringQuery = new Query("SELECT `orders`:[`id`,`cost`,`customers`:[`id`,`name`,`passports`:[`id`,`date`]]]", self::$graph, self::$driver);
+			$this->fail("Expected namespace does not exist exception");
+		} catch (\Exception $e) {
+			$this->assertEquals($expectedException, $e->getMessage());
+		}
     }
 
     public function testSelectColumnNameAlreadyUsed() {
@@ -256,7 +273,12 @@ class SelectExportTest extends Graph_MySQL_Database_TestCase {
             $this->assertEquals($expectedException, $e->getMessage());
         }
 
-        $stringQuery = new Query("SELECT `orders`:[`id`,`cost`,`customers`:[`id`,`name`,`vip` AS `name`]]", self::$graph, self::$driver);
+        try {
+			$stringQuery = new Query("SELECT `orders`:[`id`,`cost`,`customers`:[`id`,`name`,`vip` AS `name`]]", self::$graph, self::$driver);
+			$this->fail("Expected column name already used exception");
+		} catch (\Exception $e) {
+			$this->assertEquals($expectedException, $e->getMessage());
+		}
     }
 
     public function testSelectNoColumnsForSchema() {
@@ -277,7 +299,12 @@ class SelectExportTest extends Graph_MySQL_Database_TestCase {
             $this->assertEquals($expectedException, $e->getMessage());
         }
 
-        $stringQuery = new Query("SELECT `orders`:[`customers`:[`id`,`name`]]", self::$graph, self::$driver);
+        try {
+			$stringQuery = new Query("SELECT `orders`:[`customers`:[`id`,`name`]]", self::$graph, self::$driver);
+			$this->fail("Expected no columns exception");
+		} catch (\Exception $e) {
+			$this->assertEquals($expectedException, $e->getMessage());
+		}
     }
 
     public function testSelectNoColumnsOrRelationshipsForSchema() {
@@ -349,6 +376,15 @@ class SelectExportTest extends Graph_MySQL_Database_TestCase {
 						'name',
 					],
 				]);
+
+    		$this->fail("Expected primary column alias exception");
+		} catch (\Exception $e) {
+    		$this->assertEquals($expectedException, $e->getMessage());
+		}
+
+		try {
+			$stringQuery = new Query("SELECT `customers`:[`id` AS `newId`,`name`]", self::$graph, self::$driver);
+			$this->fail("Expected primary column alias exception");
 		} catch (\Exception $e) {
     		$this->assertEquals($expectedException, $e->getMessage());
 		}
@@ -366,6 +402,15 @@ class SelectExportTest extends Graph_MySQL_Database_TestCase {
 						'associated_id'
 					],
 				]);
+
+			$this->fail("Expected protected column name exception");
+		} catch (\Exception $e) {
+			$this->assertEquals($expectedException, $e->getMessage());
+		}
+
+		try {
+			$stringQuery = new Query("SELECT `customers`:[`id`,`name`,`associated_id`]", self::$graph, self::$driver);
+			$this->fail("Expected protected column name exception");
 		} catch (\Exception $e) {
 			$this->assertEquals($expectedException, $e->getMessage());
 		}

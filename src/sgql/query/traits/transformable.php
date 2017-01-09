@@ -13,8 +13,38 @@ trait Transformable {
     }
 
     private function transformSelect(array $parsed) {
-        // Doesn't do anything yet, but this will transform a query string that was parsed into what $this->select needs
+    	$locationGraph = $parsed[Parser::KEYWORD_SELECT];
+
+    	$topLevelSchemaName = $locationGraph['value'];
+		$columns = [$topLevelSchemaName => $this->transformLocationGraph($locationGraph[Parser::TOKEN_LOCATION_GRAPH])];
+
+		$this->select($columns);
     }
+
+    protected function transformLocationGraph(array $parsed) {
+		foreach ($parsed as $item) {
+			if ($item['type'] == Parser::TOKEN_ENTITY_NAME) {
+				if (isset($item[Parser::TOKEN_ALIAS])) {
+					$columns[$item[Parser::TOKEN_ALIAS]['value']] = $item['value'];
+				} else {
+					if (isset($item[Parser::TOKEN_LOCATION_GRAPH])) { // Associated schema
+						$columns[$item['value']] = $this->transformLocationGraph($item[Parser::TOKEN_LOCATION_GRAPH]);
+					} else { // Plain column
+						$columns[] = $item['value'];
+					}
+				}
+			} else if (in_array($item['type'], [Parser::TOKEN_LOCATION_AGGREGATION, Parser::TOKEN_NAMESPACE_COUNT])) { // Only other option is that it is is a function
+				$result = $this->collapseFunction($item);
+				$alias = key($result);
+
+				$columns[$alias] = $result[$alias];
+			} else {
+				throw new \Exception("Invalid token type for location graph");
+			}
+		}
+
+		return $columns;
+	}
 
 	protected function collapseFunction(array $parsed) {
     	if ($parsed['type'] === Parser::TOKEN_LOCATION_AGGREGATION) {
