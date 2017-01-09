@@ -31,6 +31,9 @@ class Query {
     private $driver;
 
     function __construct($query = null, Graph\Graph $graph, Drivers\Driver $driver) {
+		$this->graph = $graph;
+		$this->driver = $driver;
+
         if (!is_null($query)) {
             if (!is_string($query)) {
                 throw new \Exception("Query must be a string");
@@ -38,9 +41,6 @@ class Query {
                 $this->transform($query);
             }
         }
-
-        $this->graph = $graph;
-        $this->driver = $driver;
     }
 
     public function getDriver() {
