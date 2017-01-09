@@ -49,7 +49,7 @@ trait Validatable {
         }
 
         foreach ($columns as $alias => $column) {
-            if (is_array($column)) { // Column name / function
+            if (is_array($column)) { // Associated schema
                 if (!is_string($alias)) {
                     throw new \Exception("One or more sets of columns is not referenced by a schema name");
                 }
