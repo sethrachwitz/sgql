@@ -26,6 +26,7 @@ trait Validatable {
             throw new \Exception("Only one top level namespace can be specified");
         }
 
+        reset($columns);
         $topLevelSchema = key($columns);
 
         if (!is_string($topLevelSchema)) {
@@ -119,6 +120,7 @@ trait Validatable {
     protected function validateColumnsFunctionColumns() {
         // This should be run after columns have been assigned, to validate any functions that have columns,
         // as that can't be done until all of the columns/aliases are assigned to the query array
+		reset($this->query);
         $topLevelSchema = key($this->query);
 
         $namespace = [$topLevelSchema];
@@ -178,6 +180,7 @@ trait Validatable {
             $this->graph->getNamespace($namespace); // Validate namespace
 
             // Test if the first schema in the function's namespace
+			reset($this->query);
             $topLevelSchema = key($this->query);
 
             if ($topLevelSchema === $namespace[0]) {
