@@ -22,8 +22,8 @@ trait Validatable {
     protected function validateColumns(array $columns) {
         if (sizeof($columns) == 0) {
             throw new \Exception("No namespace specified");
-        } else if (sizeof($columns) > 2) {
-            throw new \Exception("Only one top level namespace can be specified");
+        } else if (sizeof($columns) > 1) {
+            throw new \Exception("Only one top level schema can be specified");
         }
 
         reset($columns);

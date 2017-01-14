@@ -415,4 +415,24 @@ class SelectExportTest extends Graph_MySQL_Database_TestCase {
 			$this->assertEquals($expectedException, $e->getMessage());
 		}
 	}
+
+	public function testMultipleTopLevelSchemas() {
+    	$expectedException = "Only one top level schema can be specified";
+
+    	try {
+    		$chainedQuery = (new Query(null, self::$graph, self::$driver))
+				->select([
+					'customers' => [
+						'name',
+					],
+					'orders' => [
+						'cost',
+					],
+				]);
+
+    		$this->fail("Expected multiple top level schemas exception");
+		} catch (\Exception $e) {
+    		$this->assertEquals($expectedException, $e->getMessage());
+		}
+	}
 }
