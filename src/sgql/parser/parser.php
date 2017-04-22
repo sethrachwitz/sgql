@@ -588,15 +588,6 @@ class Parser {
         // Check if value or entity (which would then have a nested graph)
         if ($token1 = $this->grabToken(self::TOKEN_VALUE, true)) {
             $this->grabWhitespace();
-
-            if ($token4 = $this->grabString(',', true)) {
-                // [ "," <locationgraphi> ]
-                $this->grabWhitespace();
-
-                $token5 = $this->grabToken(self::TOKEN_VALUE_GRAPH_I);
-
-                return array_merge([$token1], $token5);
-            }
         } else if ($token1 = $this->grabToken(self::TOKEN_ENTITY_NAME, true)) { // Token is an entity, so it will have a nested graph
             $token2 = $this->grabString(':[');
             $this->grabWhitespace();
@@ -611,6 +602,16 @@ class Parser {
         } else { // Neither valid token was found
             $this->throwException("Invalid entity name or value");
         }
+
+        // Check for more values and merge them into this graph if they exist
+	    if ($token4 = $this->grabString(',', true)) {
+		    // [ "," <locationgraphi> ]
+		    $this->grabWhitespace();
+
+		    $token5 = $this->grabToken(self::TOKEN_VALUE_GRAPH_I);
+
+		    return array_merge([$token1], $token5);
+	    }
 
 
         return [$token1];
