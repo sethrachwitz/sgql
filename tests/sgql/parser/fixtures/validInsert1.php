@@ -51,35 +51,35 @@ $expected = [
 			'type' => Parser::TOKEN_ENTITY_NAME,
 			'value' => 'customers',
 			'withBackticks' => '`customers`',
-			'location' => 78,
+			'location' => 69,
 			Parser::TOKEN_VALUE_GRAPH => [
 				[
 					'type' => Parser::TOKEN_STRING,
 					'value' => 'Steve Jobs',
 					'withQuotes' => '"Steve Jobs"',
-					'location' => 91,
+					'location' => 82,
 				],
 				[
 					'type' => Parser::TOKEN_STRING,
 					'value' => 'Apple',
 					'withQuotes' => '"Apple"',
-					'location' => 105,
+					'location' => 96,
 				],
 				[
 					'type' => Parser::TOKEN_ENTITY_NAME,
 					'value' => 'orders',
 					'withBackticks' => '`orders`',
-					'location' => 114,
+					'location' => 105,
 					Parser::TOKEN_VALUE_GRAPH => [
 						[
 							'type' => Parser::TOKEN_PARAMETER,
 							'value' => 'cost',
-							'location' => 124,
+							'location' => 115,
 						],
 						[
 							'type' => Parser::TOKEN_BOOLEAN,
 							'value' => 'false',
-							'location' => 131,
+							'location' => 122,
 						],
 					],
 				],
