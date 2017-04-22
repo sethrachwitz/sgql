@@ -27,11 +27,9 @@ trait Transformable {
     	$locationGraph = $parsed[Parser::KEYWORD_INSERT];
 
     	$columns = $this->transformLocationGraph($locationGraph[Parser::TOKEN_LOCATION_GRAPH]);
-    	$valueGraph = $parsed[Parser::KEYWORD_VALUES];
+    	$valueGraphs = $parsed[Parser::KEYWORD_VALUES];
 
-	    $topLevelSchemaName = $locationGraph['value'];
-
-    	$values = [$topLevelSchemaName => $this->transformValueGraph($columns, $valueGraph[Parser::TOKEN_VALUE_GRAPH])];
+    	$values = $this->transformValueGraphs($columns, $valueGraphs);
 
     	$this->insert($values);
     }
@@ -61,25 +59,39 @@ trait Transformable {
 		return $columns;
 	}
 
-	protected function transformValueGraph(array $columns, array $parsed) {
+	protected function transformValueGraphs(array $columns, array $parsed) {
     	$result = [];
-		foreach ($parsed as $i => $item) {
-			// $result[0] is used below because the engine can handle multiple values, but they are not allowed in
-			// string queries for readability
+    	foreach ($parsed as $row => $value) {
+    		$schemaName = $value['value'];
+    		$result[$schemaName][] = $this->transformValueGraph($columns, $value[Parser::TOKEN_VALUE_GRAPH], [$schemaName]);
+    		// If there are multiple $schemaName's, the validator will throw an exception
+	    }
 
+	    return $result;
+	}
+
+	protected function transformValueGraph(array $columns, array $parsed, array $namespace) {
+    	$result = [];
+
+    	if (count($columns) != count($parsed)) {
+    		throw new \Exception("Column / value count mismatch in namespace '".implode('.', $namespace)."'");
+	    }
+
+		foreach ($parsed as $i => $item) {
 			if (isset($item[Parser::TOKEN_VALUE_GRAPH])) {
 				$schemaName = $item['value'];
 				if (!isset($columns[$schemaName]) || !is_array($columns[$schemaName])) {
 					throw new \Exception("Unable to associate schema '".$schemaName."' with a value");
 				}
 				$column = $columns[$schemaName];
-				$result[0][$schemaName] = $this->transformValueGraph($column, $item[Parser::TOKEN_VALUE_GRAPH]);
+				// Use [0] because we only allow at most one nested value in string queries, for readability
+				$result[$schemaName][0] = $this->transformValueGraph($column, $item[Parser::TOKEN_VALUE_GRAPH], array_merge($namespace, [$schemaName]));
 			} else if (isset($item['value'])) {
 				if (!isset($columns[$i]) || is_array($columns[$i])) {
 					throw new \Exception("No column for value '".$item['value']."'");
 				}
 				$column = $columns[$i];
-				$result[0][$column] = $item['value'];
+				$result[$column] = $item['value'];
 			}
 		}
 

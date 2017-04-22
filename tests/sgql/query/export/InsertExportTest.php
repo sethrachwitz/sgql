@@ -57,7 +57,7 @@ class InsertExportTest extends Graph_MySQL_Database_TestCase {
 				]
 			]);
 
-		// String queries do not allow multiple values for readability
+		$stringQuery = new Query('INSERT `customers`:[`name`] VALUES `customers`:["Larry Ellison"],`customers`:["Bill Gates"]', self::$graph, self::$driver);
 
 		$expected = [
 			Query::PART_VALUES => [
@@ -76,6 +76,7 @@ class InsertExportTest extends Graph_MySQL_Database_TestCase {
 			],
 		];
 
+		$this->assertEquals($expected, $stringQuery->export());
 		$this->assertEquals($expected, $chainedQuery->export());
 	}
 
@@ -147,7 +148,7 @@ class InsertExportTest extends Graph_MySQL_Database_TestCase {
 				]
 			]);
 
-		// String queries do not allow multiple values for readability
+		// String queries do not allow multiple nested values for readability
 
 		$expected = [
 			Query::PART_VALUES => [
@@ -298,6 +299,7 @@ class InsertExportTest extends Graph_MySQL_Database_TestCase {
 	public function testInsertNoColumnForValue() {
 		try {
 			$stringQuery = new Query('INSERT `customers`:[`name`,`orders`:[`cost`]] VALUES `customers`:[`orders`:[92.3],"Larry Ellison"]', self::$graph, self::$driver);
+			$this->fail("Expected no column for value exception");
 		} catch (\Exception $e) {
 			$this->assertEquals("No column for value 'Larry Ellison'", $e->getMessage());
 		}
@@ -306,8 +308,18 @@ class InsertExportTest extends Graph_MySQL_Database_TestCase {
 	public function testInsertNoColumnForValue2() {
 		try {
 			$stringQuery = new Query('INSERT `customers`:[`name`] VALUES `customers`:[`orders`:[92.3]]', self::$graph, self::$driver);
+			$this->fail("Expected unable to associate schema with value exception");
 		} catch (\Exception $e) {
 			$this->assertEquals("Unable to associate schema 'orders' with a value", $e->getMessage());
+		}
+	}
+
+	public function testInsertStringColumnValueCountMismatch() {
+		try {
+			$stringQuery = new Query('INSERT `customers`:[`name`,`vip`] VALUES `customers`:["Larry Ellison"]', self::$graph, self::$driver);
+			$this->fail("Expected column / value count mismatch exception");
+		} catch (\Exception $e) {
+			$this->assertEquals("Column / value count mismatch in namespace 'customers'", $e->getMessage());
 		}
 	}
 }
