@@ -30,6 +30,12 @@ trait Assignable {
         }
     }
 
+    protected function assignValues(array $values) {
+    	$validated = $this->validateValues($values);
+
+    	$this->query[self::PART_VALUES] = $validated;
+	}
+
     private function &getNamespacePointer(array $namespace, $createIfNonexistant = false) {
         $pointer = null;
 
