@@ -214,4 +214,60 @@ trait Validatable {
             }
         }
     }
+
+    protected function validateValues(array $values) {
+		if (sizeof($values) == 0) {
+			throw new \Exception("No namespace specified");
+		} else if (sizeof($values) > 1) {
+			throw new \Exception("Only one top level schema can be specified");
+		}
+
+		reset($values);
+		$topLevelSchema = key($values);
+
+		if (!is_string($topLevelSchema)) {
+			throw new \Exception("One or more sets of values is not referenced by a schema name");
+		}
+
+		return [$topLevelSchema => $this->_validateValues($values[$topLevelSchema], [$topLevelSchema])];
+	}
+
+	private function _validateValues(array $rows, $namespace) {
+		$result = [];
+
+		// Will throw exception if the namespace doesn't exist, or if a schema doesn't exist
+		$this->graph->getNamespace($namespace);
+
+		if (sizeof($rows) === 0) {
+			throw new \Exception("Nothing is defined for namespace '".implode('.', $namespace)."'");
+		}
+
+		foreach ($rows as $i => $row) {
+			if (!is_array($row)) {
+				throw new \Exception("Invalid value structure for '".implode('.', $namespace)."'");
+			}
+
+			foreach ($row as $columnName => $value) {
+				if (is_array($value)) { // Associated schema
+					if (!is_string($columnName)) {
+						throw new \Exception("One or more sets of values is not referenced by a schema name");
+					}
+
+					$result[$i]['namespaces'][$columnName] = $this->_validateValues($value, array_merge($namespace, [$columnName]));
+				} else {
+					if ($columnName == 'associated_id') {
+						throw new \Exception("'associated_id' is a protected column name for SGQL");
+					}
+
+					$result[$i][Query::PART_COLUMNS][$columnName] = $value;
+				}
+			}
+		}
+
+		if (count($result) === 0) {
+			throw new \Exception("No values specified for namespace '".implode('.', $namespace)."'");
+		}
+
+		return $result;
+	}
 }
