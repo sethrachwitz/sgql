@@ -43,6 +43,7 @@ class Parser {
     const TOKEN_LOCATION_GRAPH = 'locationGraph';
     const TOKEN_LOCATION_GRAPH_I = 'locationGraphI';
 
+    const TOKEN_VALUE_GRAPHS = 'valueGraphs';
     const TOKEN_VALUE_GRAPH = 'valueGraph';
     const TOKEN_VALUE_GRAPH_I = 'valueGraphI';
 
@@ -333,7 +334,7 @@ class Parser {
                 // VALUES clause is not optional
                 if ($this->grabString(self::KEYWORD_VALUES)) {
                     $this->grabWhitespace(1);
-                    $result[self::KEYWORD_VALUES] = $this->grabToken(self::TOKEN_VALUE_GRAPH);
+                    $result[self::KEYWORD_VALUES] = $this->grabToken(self::TOKEN_VALUE_GRAPHS);
                 }
                 break;
             case self::KEYWORD_SELECT:    // passthrough
@@ -565,6 +566,25 @@ class Parser {
         }
 
         return [$token1];
+    }
+
+    private function valueGraphsToken() {
+	    $token1 = $this->grabToken(self::TOKEN_VALUE_GRAPH);
+
+	    try {
+		    $this->grabWhitespace(0);
+		    $this->grabString(",");
+	    } catch (\Exception $e) {
+		    // No other associates to see here
+		    $this->returnWhitespace();
+		    return [$token1];
+	    }
+
+	    $this->grabWhitespace();
+
+	    $token2 = $this->grabToken(self::TOKEN_VALUE_GRAPHS);
+
+	    return array_merge([$token1], $token2);
     }
 
     private function valueGraphToken() {

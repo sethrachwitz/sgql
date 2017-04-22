@@ -53,7 +53,9 @@
 
 
 ; VALUES
-<values>        ::= VALUES <valuegraph> ;
+<values>        ::= VALUES <valuegraphs> ;
+
+<valuegraphs>   ::= <valuegraph> ["," <valuegraph>] ;
 
 <valuegraph>    ::= <entityname>":[" <valuegraphi> "]" ;
 
