@@ -9,6 +9,8 @@ trait Transformable {
 
         if (isset($parsed[Parser::KEYWORD_SELECT])) {
             $this->transformSelect($parsed);
+        } else if (isset($parsed[Parser::KEYWORD_INSERT])) {
+        	$this->transformInsert($parsed);
         }
     }
 
@@ -19,6 +21,19 @@ trait Transformable {
 		$columns = [$topLevelSchemaName => $this->transformLocationGraph($locationGraph[Parser::TOKEN_LOCATION_GRAPH])];
 
 		$this->select($columns);
+    }
+
+    private function transformInsert(array $parsed) {
+    	$locationGraph = $parsed[Parser::KEYWORD_INSERT];
+
+    	$columns = $this->transformLocationGraph($locationGraph[Parser::TOKEN_LOCATION_GRAPH]);
+    	$valueGraph = $parsed[Parser::KEYWORD_VALUES];
+
+	    $topLevelSchemaName = $locationGraph['value'];
+
+    	$values = [$topLevelSchemaName => $this->transformValueGraph($columns, $valueGraph[Parser::TOKEN_VALUE_GRAPH])];
+
+    	$this->insert($values);
     }
 
     protected function transformLocationGraph(array $parsed) {
@@ -44,6 +59,31 @@ trait Transformable {
 		}
 
 		return $columns;
+	}
+
+	protected function transformValueGraph(array $columns, array $parsed) {
+    	$result = [];
+		foreach ($parsed as $i => $item) {
+			// $result[0] is used below because the engine can handle multiple values, but they are not allowed in
+			// string queries for readability
+
+			if (isset($item[Parser::TOKEN_VALUE_GRAPH])) {
+				$schemaName = $item['value'];
+				if (!isset($columns[$schemaName]) || !is_array($columns[$schemaName])) {
+					throw new \Exception("Unable to associate schema '".$schemaName."' with a value");
+				}
+				$column = $columns[$schemaName];
+				$result[0][$schemaName] = $this->transformValueGraph($column, $item[Parser::TOKEN_VALUE_GRAPH]);
+			} else if (isset($item['value'])) {
+				if (!isset($columns[$i]) || is_array($columns[$i])) {
+					throw new \Exception("No column for value '".$item['value']."'");
+				}
+				$column = $columns[$i];
+				$result[0][$column] = $item['value'];
+			}
+		}
+
+		return $result;
 	}
 
 	protected function collapseFunction(array $parsed) {

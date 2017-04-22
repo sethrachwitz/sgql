@@ -15,10 +15,12 @@ class Query {
     use Validatable;
 
     const TYPE_SELECT = "SELECT";
+    const TYPE_INSERT = "INSERT";
 
-    const QUERY_TYPES = [self::TYPE_SELECT];
+    const QUERY_TYPES = [self::TYPE_SELECT, self::TYPE_INSERT];
 
     const PART_COLUMNS = 'columns';
+    const PART_VALUES = 'values';
 
     private $parser;
     private $query = [];
@@ -69,6 +71,13 @@ class Query {
 
         return $this;
     }
+
+    public function insert(array $values, array $associations = []) {
+    	$this->setQueryType(self::TYPE_INSERT);
+    	$this->assignValues($values);
+
+    	return $this;
+	}
 
     public function bind(array $data) {
         $this->data = $data;
