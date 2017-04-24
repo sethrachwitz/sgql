@@ -22,3 +22,9 @@ CREATE TABLE IF NOT EXISTS `products` (
     `price` DOUBLE NOT NULL,
     PRIMARY KEY (`id`)
 );
+
+CREATE TABLE IF NOT EXISTS `passports` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `country` VARCHAR(100) NOT NULL,
+    PRIMARY KEY (`id`)
+);
