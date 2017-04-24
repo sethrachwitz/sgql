@@ -3,7 +3,7 @@
 namespace SGQL;
 
 use SGQL\Lib\Graph as Graph;
-use SGqL\Lib\Drivers as Drivers;
+use SGQL\Lib\Drivers as Drivers;
 
 include_once(dirname(__FILE__).'/traits/assignable.php');
 include_once(dirname(__FILE__).'/traits/transformable.php');
