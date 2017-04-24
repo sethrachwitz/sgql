@@ -77,6 +77,7 @@ abstract class Driver {
     abstract public function beginTransaction();
     abstract public function rollback();
     abstract public function commit();
+    abstract public function autoIncrementIsConsecutive();
 
     abstract public function newQuery();
 }

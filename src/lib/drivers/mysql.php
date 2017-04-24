@@ -35,7 +35,21 @@ class MySQL extends Driver {
         $this->connection->commit();
     }
 
-    public function query($query) {
+    public function autoIncrementIsConsecutive() {
+    	try {
+		    $results = $this->query("SELECT @@GLOBAL.innodb_autoinc_lock_mode AS mode;")->fetchAll();
+	    } catch (\PDOException $e) {
+    		return false;
+	    }
+
+    	if (count($results) == 0) {
+    		return false;
+	    }
+
+	    return ($results[0]['mode'] != 2); // Mode 2 is interleaved mode, which does not guarantee consecutive IDs
+    }
+
+	public function query($query) {
         $result = parent::query($query);
 
         return new MySQL_Result_Set($result, $this->connection->lastInsertId());

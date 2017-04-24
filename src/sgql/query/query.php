@@ -73,6 +73,12 @@ class Query {
     }
 
     public function insert(array $values, array $associations = []) {
+    	// Auto increment values must be consecutive because the code depends on it
+	    if (!$this->driver->autoIncrementIsConsecutive()) {
+		    throw new \Exception("The auto increment settings for this connection do not guarantee consecutive IDs.  Please " .
+			    "update your settings to guarantee that bulk inserts will have consecutive IDs.");
+	    }
+
     	$this->setQueryType(self::TYPE_INSERT);
     	$this->assignValues($values);
 
