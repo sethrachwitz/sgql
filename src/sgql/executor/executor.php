@@ -34,7 +34,7 @@ class Executor {
 				return $this->results;
 				break;
 			default:
-				throw new \Exception("Unknown query type");
+				throw new \Exception("Unknown query type '".$this->query->getQueryType()."'");
 				break;
 		}
 	}
