@@ -239,7 +239,7 @@ class Graph {
 
     public function addAssociation(Schema $schema1, Schema $schema2, $type) {
     	if (!in_array($type, Association::ASSOCIATION_TYPES)) {
-    		throw new \Exception("Invalid association type");
+    		throw new \Exception("Invalid association type '".$type."'");
 		}
 
 		$schema1id = $schema1->getId();
