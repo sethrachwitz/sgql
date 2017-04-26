@@ -16,6 +16,10 @@ trait Validatable {
             if (sizeof($this->query[self::PART_COLUMNS]) == 0) {
                 throw new \Exception("Missing columns");
             }
+        } else if ($this->queryType === self::TYPE_INSERT) {
+        	if (sizeof($this->query[self::PART_VALUES]) == 0) {
+        		throw new \Exception("Missing values");
+	        }
         }
     }
 

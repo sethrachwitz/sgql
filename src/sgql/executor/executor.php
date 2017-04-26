@@ -6,11 +6,13 @@ use SGQL\Query;
 
 include_once(dirname(__FILE__) . '/traits/createable.php');
 include_once(dirname(__FILE__) . '/traits/selectable.php');
+include_once(dirname(__FILE__) . '/traits/insertable.php');
 include_once(dirname(__FILE__).'/../query/query.php');
 
 class Executor {
 	use Createable;
 	use Selectable;
+	use Insertable;
 
     protected $query;
     protected $graph;
@@ -35,6 +37,10 @@ class Executor {
 				$this->executeSelect();
 				return $this->results;
 				break;
+		    case Query::TYPE_INSERT:
+		    	$this->executeInsert();
+		    	return $this->results;
+		    	break;
 			default:
 				throw new \Exception("Unknown query type '".$this->query->getQueryType()."'");
 				break;
