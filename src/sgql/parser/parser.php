@@ -10,7 +10,12 @@ class Parser {
     const KEYWORD_UPDATE = 'UPDATE';
     const KEYWORD_DELETE = 'DELETE';
     const KEYWORD_DESCRIBE = 'DESCRIBE';
+    const KEYWORD_CREATE = 'CREATE';
 	const KEYWORD_SHOW = 'SHOW'; // Multipurpose
+
+    const KEYWORD_ASSOCIATION = 'ASSOCIATION';
+    const TOKEN_ASSOC = 'assoc';
+    const TOKEN_ASSOC_TYPE = 'assocType';
 
     const KEYWORD_WHERE = 'WHERE';
     const TOKEN_WHERES = 'wheres';
@@ -286,6 +291,19 @@ class Parser {
                 $this->grabWhitespace(1);
                 $result[$type] = $this->grabToken(self::TOKEN_ENTITY_NAME);
                 break;
+	        case self::KEYWORD_CREATE:
+	        	$this->grabWhitespace(1);
+	        	$subtype = $this->grabRegex('[A-Z]+');
+	        	if ($subtype) {
+	        		$subtype = $subtype['value'];
+		        }
+	        	if ($subtype == self::KEYWORD_ASSOCIATION) {
+			        $this->grabWhitespace(1);
+	        		$result[$type][$subtype] = $this->grabToken(self::TOKEN_ASSOC);
+		        } else {
+	        		echo $subtype;
+		        }
+		        break;
             default:
                 $this->throwException("Invalid query type");
                 break;
@@ -501,6 +519,24 @@ class Parser {
         }
 
         return $result;
+    }
+
+    private function assocToken() {
+		$token1 = $this->grabToken(self::TOKEN_ENTITY_NAME);
+
+		$this->grabWhitespace(1);
+
+		$token2 = $this->grabToken(self::TOKEN_ASSOC_TYPE);
+
+		$this->grabWhitespace(1);
+
+		$token3 = $this->grabToken(self::TOKEN_ENTITY_NAME);
+
+		return [
+			'parent' => $token1,
+			self::TOKEN_ASSOC_TYPE => $token2,
+			'child' => $token3,
+		];
     }
 
     private function locationGraphToken($options) {
@@ -1166,6 +1202,18 @@ class Parser {
         }
 
         return $token1;
+    }
+
+    private function assocTypeToken() {
+	    if (!$token1 = $this->grabRegex('(-|<-|<->)')) {
+		    $this->throwException("Expected association type");
+	    }
+
+	    return [
+		    'type' => self::TOKEN_ASSOC_TYPE,
+		    'value' => $token1['value'],
+		    'location' => $token1['location'],
+	    ];
     }
 
     private function comparisonToken() {

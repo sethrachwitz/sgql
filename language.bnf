@@ -4,6 +4,7 @@
                   | <update> <where> [<set>] <associate> [<disassociate>]
                   | <update> <where> [<set>] [<associate>] <disassociate>
                   | <delete> [<where>]
+                  | <create> <association>
                   | <describe>
                   ;
 
@@ -15,6 +16,11 @@
 <delete>        ::= "DELETE" <entityname> ;
 <describe>      ::= "DESCRIBE" <entityname> ;
 
+; Maintenance query types
+<create>        ::= "CREATE" <association> ;
+
+<association>   ::= "ASSOCIATION" <assoc> ;
+<assoc>         ::= <entityname> <assoctype> <entityname> ;
 
 ; LOCATION GRAPH
 <locationgraph> ::= <entityname>":[" <locationgraphi> "]" ;
@@ -126,6 +132,7 @@
 ; Operators
 <comparison>    ::= "==" | "!=" | "<" | "<=" | ">" | ">=" ;
 <assign>        ::= "=" ;
+<assoctype>     ::= "-" | "<-" | "<->" ;
 
 
 ; Function names
