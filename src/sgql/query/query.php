@@ -117,7 +117,7 @@ class Query {
         }
 
         if (!in_array($type, self::QUERY_TYPES)) {
-            throw new \Exception("Invalid query type");
+            throw new \Exception("Invalid query type '".$type."'");
         } else {
             $this->queryType = $type;
         }
