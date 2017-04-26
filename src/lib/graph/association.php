@@ -55,4 +55,8 @@ class Association {
 	public function getChild() {
     	return $this->schema2;
 	}
+
+	public function getType() {
+    	return $this->type;
+	}
 }
