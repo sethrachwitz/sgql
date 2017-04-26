@@ -52,24 +52,6 @@ class SGQL {
         return new SGQL\Query($query, $this->graph, $this->driver);
     }
 
-    public function createAssociation($schema1, $type, $schema2) {
-    	switch ($type) {
-			case '-':
-				$type = SGQL\Lib\Graph\Association::TYPE_ONE_TO_ONE;
-				break;
-			case '<-':
-				$type = SGQL\Lib\Graph\Association::TYPE_MANY_TO_ONE;
-				break;
-			case '<->':
-				$type = SGQL\Lib\Graph\Association::TYPE_MANY_TO_MANY;
-				break;
-			default:
-				throw new \Exception("Invalid association type '".$type."'");
-		}
-
-    	return $this->graph->addAssociation($this->graph->getSchema($schema1), $this->graph->getSchema($schema2), $type);
-	}
-
     public function query(Query $query) {
 		$executor = new Executor\Executor($query);
 		return $executor->execute();
