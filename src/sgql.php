@@ -56,4 +56,12 @@ class SGQL {
 		$executor = new Executor\Executor($query);
 		return $executor->execute();
 	}
+
+	public function getGraph() {
+    	return $this->graph;
+	}
+
+	public function getDriver() {
+    	return $this->driver;
+	}
 }
