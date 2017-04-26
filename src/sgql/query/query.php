@@ -42,6 +42,8 @@ class Query {
 
     // Comes from the SGQL parent creator
     private $graph;
+
+    /** @var Drivers\Driver $driver */
     private $driver;
 
     function __construct($query = null, Graph\Graph $graph, Drivers\Driver $driver) {
