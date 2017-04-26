@@ -13,7 +13,7 @@ class Association {
     private $type;
 	private $id;
 
-    function __construct($schema1, $schema2, $type, $id = null) {
+    function __construct(Schema $schema1, Schema $schema2, $type, $id = null) {
         $this->schema1 = $schema1;
         $this->schema2 = $schema2;
 
@@ -24,7 +24,7 @@ class Association {
 		$this->id = $id;
 
         if (!in_array($type, self::ASSOCIATION_TYPES)) {
-            throw new \Exception("Association between '".$schema1."' and '".$schema2."' has invalid type '".$type."'");
+            throw new \Exception("Association between '".$schema1->getName()."' and '".$schema2->getName()."' has invalid type '".$type."'");
         }
 
         $this->type = $type;
