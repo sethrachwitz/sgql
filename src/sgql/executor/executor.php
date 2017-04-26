@@ -14,6 +14,8 @@ class Executor {
 
     protected $query;
     protected $graph;
+
+    /** @var \SGQL\Lib\Drivers\Driver  */
     protected $driver;
     protected $results;
 
