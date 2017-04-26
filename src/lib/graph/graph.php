@@ -269,7 +269,7 @@ class Graph {
 			$this->driver->query("CREATE TABLE `sgql_association_".$associationId."` (
 				`p_id` INT NOT NULL,
 				`c_id` INT NOT NULL,
-				PRIMARY KEY (`p_id`)
+				PRIMARY KEY (`p_id`, `c_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;");
 
 			if ($type === Association::TYPE_ONE_TO_ONE) {
