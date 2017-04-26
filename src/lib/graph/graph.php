@@ -315,6 +315,10 @@ class Graph {
         }
     }
 
+    public function getAssociations() {
+    	return $this->associations;
+    }
+
     public function namespaceExists(array $namespace) {
         try {
             $this->getNamespace($namespace);

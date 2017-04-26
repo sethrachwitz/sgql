@@ -17,7 +17,7 @@ class CreateTest extends SGQL_MySQL_Database_TestCase {
 		$sgql = new SGQL(self::$config, self::$database);
 		$sgql->initialize();
 
-		$this->assertCount(1, $sgql->showAssociations());
+		$this->assertCount(1, $sgql->getGraph()->getAssociations());
 
 		$query = $sgql->newQuery()
 			->createAssociation('orders', SGQL::ASSOCIATION_TYPE_MANY_TO_MANY, 'products');
@@ -29,14 +29,14 @@ class CreateTest extends SGQL_MySQL_Database_TestCase {
 		$this->assertEquals('products', $association->getChild()->getName());
 		$this->assertEquals(2, $association->getType());
 
-		$this->assertCount(2, $sgql->showAssociations());
+		$this->assertCount(2, $sgql->getGraph()->getAssociations());
 	}
 
 	public function testCreateAssociationStringQuery() {
 		$sgql = new SGQL(self::$config, self::$database);
 		$sgql->initialize();
 
-		$this->assertCount(1, $sgql->showAssociations());
+		$this->assertCount(1, $sgql->getGraph()->getAssociations());
 
 		$query = $sgql->newQuery("CREATE ASSOCIATION `orders` <-> `products`");
 
@@ -47,7 +47,7 @@ class CreateTest extends SGQL_MySQL_Database_TestCase {
 		$this->assertEquals('products', $association->getChild()->getName());
 		$this->assertEquals(2, $association->getType());
 
-		$this->assertCount(2, $sgql->showAssociations());
+		$this->assertCount(2, $sgql->getGraph()->getAssociations());
 	}
 
 	public function testCreateExistingAssociation() {
