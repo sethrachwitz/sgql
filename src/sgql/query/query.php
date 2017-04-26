@@ -14,13 +14,25 @@ class Query {
     use Transformable;
     use Validatable;
 
+    const TYPE_CREATE = "CREATE";
     const TYPE_SELECT = "SELECT";
     const TYPE_INSERT = "INSERT";
 
-    const QUERY_TYPES = [self::TYPE_SELECT, self::TYPE_INSERT];
+    const QUERY_TYPES = [self::TYPE_CREATE, self::TYPE_SELECT, self::TYPE_INSERT];
+
+	const ASSOCIATION_TYPE_ONE_TO_ONE = Graph\Association::TYPE_ONE_TO_ONE;
+	const ASSOCIATION_TYPE_MANY_TO_ONE = Graph\Association::TYPE_MANY_TO_ONE;
+	const ASSOCIATION_TYPE_MANY_TO_MANY = Graph\Association::TYPE_MANY_TO_MANY;
+
+	const ASSOCIATION_TYPES = [
+		self::ASSOCIATION_TYPE_ONE_TO_ONE,
+		self::ASSOCIATION_TYPE_MANY_TO_ONE,
+		self::ASSOCIATION_TYPE_MANY_TO_MANY,
+	];
 
     const PART_COLUMNS = 'columns';
     const PART_VALUES = 'values';
+    const PART_ASSOCIATION = 'association';
 
     private $parser;
     private $query = [];
@@ -63,6 +75,13 @@ class Query {
 
     public function getQueryType() {
         return $this->queryType;
+    }
+
+    public function createAssociation($parent, $type, $child) {
+    	$this->setQueryType(self::TYPE_CREATE);
+    	$this->assignAssociation($parent, $type, $child);
+
+    	return $this;
     }
 
     public function select(array $select) {

@@ -7,11 +7,27 @@ trait Transformable {
         $this->parser = new Parser($input);
         $parsed = $this->parser->getParsed();
 
-        if (isset($parsed[Parser::KEYWORD_SELECT])) {
+        if (isset($parsed[Parser::KEYWORD_CREATE])) {
+        	$this->transformCreate($parsed);
+        } else if (isset($parsed[Parser::KEYWORD_SELECT])) {
             $this->transformSelect($parsed);
         } else if (isset($parsed[Parser::KEYWORD_INSERT])) {
         	$this->transformInsert($parsed);
         }
+    }
+
+    private function transformCreate(array $parsed) {
+    	$create = $parsed[Parser::KEYWORD_CREATE];
+
+    	if (isset($create[Parser::KEYWORD_ASSOCIATION])) {
+    		$association = $create[Parser::KEYWORD_ASSOCIATION];
+
+		    $this->createAssociation(
+			    $association['parent']['value'],
+			    $association[Parser::TOKEN_ASSOC_TYPE]['value'],
+			    $association['child']['value']
+		    );
+	    }
     }
 
     private function transformSelect(array $parsed) {

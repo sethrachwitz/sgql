@@ -3,6 +3,23 @@
 namespace SGQL;
 
 trait Assignable {
+	protected function assignAssociation($parent, $type, $child) {
+		$this->graph->getSchema($parent);
+		$this->graph->getSchema($child);
+
+		if (!in_array($type, self::ASSOCIATION_TYPES)) {
+			throw new \Exception("Invalid association type '".$type."'");
+		}
+
+		$this->query = [
+			self::PART_ASSOCIATION => [
+				'parent' => $parent,
+				'type' => $type,
+				'child' => $child,
+			]
+		];
+	}
+
     protected function assignColumns(array $columns) {
         $validated = $this->validateColumns($columns);
 

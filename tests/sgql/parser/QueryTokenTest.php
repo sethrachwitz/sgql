@@ -5,6 +5,15 @@ namespace SGQL;
 include_once(dirname(__FILE__).'/../../Parser_TestCase.php');
 
 class QueryTokenTest extends Parser_TestCase {
+	public function testValidCreate() {
+		require 'fixtures/validCreate1.php';
+
+		$parser = new Parser($input, Parser::TOKEN_QUERY);
+		$result = $parser->getParsed();
+
+		$this->assertEquals($expected, $result);
+	}
+
     public function testValidSelect() {
         require 'fixtures/validSelect1.php';
 
