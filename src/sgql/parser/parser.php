@@ -10,6 +10,7 @@ class Parser {
     const KEYWORD_UPDATE = 'UPDATE';
     const KEYWORD_DELETE = 'DELETE';
     const KEYWORD_DESCRIBE = 'DESCRIBE';
+	const KEYWORD_SHOW = 'SHOW'; // Multipurpose
 
     const KEYWORD_WHERE = 'WHERE';
     const TOKEN_WHERES = 'wheres';
@@ -34,7 +35,6 @@ class Parser {
     const TOKEN_ORDER_BY = 'orderBy';
     const TOKEN_ORDER_DIRECTION = 'orderDirection';
 
-    const KEYWORD_SHOW = 'SHOW';
     const KEYWORD_PAGE = 'PAGE';
     const TOKEN_SHOWS = 'shows';
     const TOKEN_SHOW_I = 'showI';
