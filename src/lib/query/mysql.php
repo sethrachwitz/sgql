@@ -101,6 +101,37 @@ class MySQL extends Query {
             }
 
             $sql = substr($sql, 0, -1);
+        } else if ($this->queryType === self::TYPE_UPDATE) {
+        	$sql .= 'UPDATE ';
+
+        	// Add table name
+	        $sql .= '`'.$this->parts[self::PART_FROM].'` ';
+
+	        // Add SET
+	        $sql .= 'SET ';
+
+	        $columnKey = 0;
+	        foreach ($this->parts[self::PART_SET] as $column => $value) {
+	        	if (is_string($column)) {
+			        $sql .= '`' . $column.'` = ';
+
+			        $placeholderName = 'c'.$columnKey;
+
+			        $sql .= ':c'.$columnKey.', ';
+			        $this->data[$placeholderName] = $value;
+
+			        $columnKey++;
+		        } else {
+	        		$sql .= $value.', ';
+		        }
+	        }
+
+	        $sql = substr($sql, 0, -2);
+
+	        // Add WHERE
+	        if (sizeof($this->parts[self::PART_WHERE]) > 0) {
+		        $sql .= ' '.self::PART_WHERE.' '.implode(' AND ', $this->parts[self::PART_WHERE]);
+	        }
         }
 
         return $sql.';';
