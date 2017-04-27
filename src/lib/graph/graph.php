@@ -152,9 +152,7 @@ class Graph {
 			    ->set([
 			    	'value' => $this->version,
 			    ])
-			    ->where([
-			    	"item = 'version'"
-			    ]);
+			    ->where("item = 'version'");
 
     		$this->driver->query($query);
 
