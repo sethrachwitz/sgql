@@ -271,22 +271,27 @@ class Graph {
 		}
 
 		if ($this->driver instanceof Drivers\MySQL) {
-			$this->driver->query("CREATE TABLE `sgql_association_".$associationId."` (
+			$this->driver->query("CREATE TABLE IF NOT EXISTS `sgql_association_".$associationId."` (
 				`p_id` INT NOT NULL,
 				`c_id` INT NOT NULL,
 				PRIMARY KEY (`p_id`, `c_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;");
 
-			if ($type === Association::TYPE_ONE_TO_ONE) {
-				// Both the parent and child ID have to be unique for true 1-1
-				$this->driver->query("CREATE UNIQUE INDEX parent_id ON `sgql_association_".$associationId."` (`p_id`);");
-				$this->driver->query("CREATE UNIQUE INDEX child_id ON `sgql_association_".$associationId."` (`c_id`);");
-			} else if ($type === Association::TYPE_MANY_TO_ONE) {
-				// If the child ID is unique, it can have at most 1 parent (N-1)
-				$this->driver->query("CREATE UNIQUE INDEX child_id ON `sgql_association_".$associationId."` (`c_id`);");
-			} else if ($type === Association::TYPE_MANY_TO_MANY) {
-				// If the tuple is unique within the table, it prevents duplicates but allows any combination
-				$this->driver->query("CREATE UNIQUE INDEX tuple ON `sgql_association_".$associationId."` (`p_id`, `c_id`);");
+			try {
+				if ($type === Association::TYPE_ONE_TO_ONE) {
+					// Both the parent and child ID have to be unique for true 1-1
+					$this->driver->query("CREATE UNIQUE INDEX parent_id ON `sgql_association_".$associationId."` (`p_id`);");
+					$this->driver->query("CREATE UNIQUE INDEX child_id ON `sgql_association_".$associationId."` (`c_id`);");
+				} else if ($type === Association::TYPE_MANY_TO_ONE) {
+					// If the child ID is unique, it can have at most 1 parent (N-1)
+					$this->driver->query("CREATE UNIQUE INDEX child_id ON `sgql_association_".$associationId."` (`c_id`);");
+				} else if ($type === Association::TYPE_MANY_TO_MANY) {
+					// If the tuple is unique within the table, it prevents duplicates but allows any combination
+					$this->driver->query("CREATE UNIQUE INDEX tuple ON `sgql_association_".$associationId."` (`p_id`, `c_id`);");
+				}
+			} catch (\PDOException $e) {
+				// If this is error 42000, it means that the index already exists, which is fine
+				if ($e->getCode() != 42000) throw $e;
 			}
 
 			// @TODO: Add foreign key restraint on the association table
