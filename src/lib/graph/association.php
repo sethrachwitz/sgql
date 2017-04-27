@@ -48,6 +48,10 @@ class Association {
 		}
 	}
 
+	public function getId() {
+    	return $this->id;
+	}
+
 	public function getParent() {
     	return $this->schema1;
 	}
