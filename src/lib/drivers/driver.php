@@ -33,13 +33,13 @@ abstract class Driver {
         return false;
     }
 
-    public function query($query) {
+    public function query($query, $bind = []) {
         $queryStr = $this->queryChecks($query);
 
         $stmt = $this->connection->prepare($queryStr);
 
         if (is_string($query)) {
-        	$stmt->execute();
+        	$stmt->execute($bind);
 		} else {
 			$stmt->execute($query->getData());
 		}

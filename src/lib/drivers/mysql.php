@@ -49,8 +49,8 @@ class MySQL extends Driver {
 	    return ($results[0]['mode'] != 2); // Mode 2 is interleaved mode, which does not guarantee consecutive IDs
     }
 
-	public function query($query) {
-        $result = parent::query($query);
+	public function query($query, $bind = []) {
+        $result = parent::query($query, $bind);
 
         return new MySQL_Result_Set($result, $this->connection->lastInsertId());
     }
