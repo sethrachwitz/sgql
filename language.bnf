@@ -5,6 +5,7 @@
                   | <update> <where> [<set>] [<associate>] <disassociate>
                   | <delete> [<where>]
                   | <create> <association>
+                  | <destroy> <association>
                   | <describe>
                   ;
 
@@ -18,6 +19,7 @@
 
 ; Maintenance query types
 <create>        ::= "CREATE" <association> ;
+<destroy>       ::= "DESTROY" <association> ;
 
 <association>   ::= "ASSOCIATION" <assoc> ;
 <assoc>         ::= <entityname> <assoctype> <entityname> ;

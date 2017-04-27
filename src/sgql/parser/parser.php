@@ -11,6 +11,7 @@ class Parser {
     const KEYWORD_DELETE = 'DELETE';
     const KEYWORD_DESCRIBE = 'DESCRIBE';
     const KEYWORD_CREATE = 'CREATE';
+    const KEYWORD_DESTROY = 'DESTROY';
 	const KEYWORD_SHOW = 'SHOW'; // Multipurpose
 
     const KEYWORD_ASSOCIATION = 'ASSOCIATION';
@@ -291,7 +292,8 @@ class Parser {
                 $this->grabWhitespace(1);
                 $result[$type] = $this->grabToken(self::TOKEN_ENTITY_NAME);
                 break;
-	        case self::KEYWORD_CREATE:
+	        case self::KEYWORD_CREATE:    // passthrough
+            case self::KEYWORD_DESTROY:
 	        	$this->grabWhitespace(1);
 	        	$subtype = $this->grabRegex('[A-Z]+');
 	        	if ($subtype) {

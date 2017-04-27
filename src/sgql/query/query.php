@@ -15,10 +15,11 @@ class Query {
     use Validatable;
 
     const TYPE_CREATE = "CREATE";
+    const TYPE_DESTROY = "DESTROY";
     const TYPE_SELECT = "SELECT";
     const TYPE_INSERT = "INSERT";
 
-    const QUERY_TYPES = [self::TYPE_CREATE, self::TYPE_SELECT, self::TYPE_INSERT];
+    const QUERY_TYPES = [self::TYPE_CREATE, self::TYPE_DESTROY, self::TYPE_SELECT, self::TYPE_INSERT];
 
 	const ASSOCIATION_TYPE_ONE_TO_ONE = Graph\Association::TYPE_ONE_TO_ONE;
 	const ASSOCIATION_TYPE_MANY_TO_ONE = Graph\Association::TYPE_MANY_TO_ONE;
@@ -84,6 +85,13 @@ class Query {
     	$this->assignAssociation($parent, $type, $child);
 
     	return $this;
+    }
+
+    public function destroyAssociation($parent, $child, $type = null) {
+		$this->setQueryType(self::TYPE_DESTROY);
+		$this->assignAssociation($parent, $type, $child);
+
+		return $this;
     }
 
     public function select(array $select) {

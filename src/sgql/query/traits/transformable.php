@@ -9,6 +9,8 @@ trait Transformable {
 
         if (isset($parsed[Parser::KEYWORD_CREATE])) {
         	$this->transformCreate($parsed);
+        } else if (isset($parsed[Parser::KEYWORD_DESTROY])) {
+	        $this->transformDestroy($parsed);
         } else if (isset($parsed[Parser::KEYWORD_SELECT])) {
             $this->transformSelect($parsed);
         } else if (isset($parsed[Parser::KEYWORD_INSERT])) {
@@ -26,6 +28,20 @@ trait Transformable {
 			    $association['parent']['value'],
 			    $association[Parser::TOKEN_ASSOC_TYPE]['value'],
 			    $association['child']['value']
+		    );
+	    }
+    }
+
+    private function transformDestroy(array $parsed) {
+	    $destroy = $parsed[Parser::KEYWORD_DESTROY];
+
+	    if (isset($destroy[Parser::KEYWORD_ASSOCIATION])) {
+		    $association = $destroy[Parser::KEYWORD_ASSOCIATION];
+
+		    $this->destroyAssociation(
+			    $association['parent']['value'],
+			    $association['child']['value'],
+			    $association[Parser::TOKEN_ASSOC_TYPE]['value']
 		    );
 	    }
     }

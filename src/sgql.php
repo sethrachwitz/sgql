@@ -20,6 +20,12 @@ class SGQL {
     const ASSOCIATION_TYPE_MANY_TO_ONE = '<-';
     const ASSOCIATION_TYPE_MANY_TO_MANY = '<->';
 
+    const ASSOCIATION_MAP = [
+    	Graph\Association::TYPE_ONE_TO_ONE => self::ASSOCIATION_TYPE_ONE_TO_ONE,
+	    Graph\Association::TYPE_MANY_TO_ONE => self::ASSOCIATION_TYPE_MANY_TO_ONE,
+	    Graph\Association::TYPE_MANY_TO_MANY => self::ASSOCIATION_TYPE_MANY_TO_MANY,
+    ];
+
     private $driver;
     private $graph;
 

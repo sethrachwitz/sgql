@@ -14,6 +14,15 @@ class QueryTokenTest extends Parser_TestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+	public function testValidDestroy() {
+		require 'fixtures/validDestroy1.php';
+
+		$parser = new Parser($input, Parser::TOKEN_QUERY);
+		$result = $parser->getParsed();
+
+		$this->assertEquals($expected, $result);
+	}
+
     public function testValidSelect() {
         require 'fixtures/validSelect1.php';
 

@@ -343,6 +343,24 @@ class Graph {
     	return $association;
 	}
 
+	public function destroyAssociation(Schema $schema1, Schema $schema2) {
+		$association = $this->getAssociation($schema1->getName(), $schema2->getName());
+
+		$query = $this->driver->newQuery()
+			->update('sgql_associations')
+			->set([
+				'deleted_time = NOW()',
+			])
+			->where('id = :id')
+			->bind([
+				'id' => $association->getId(),
+			]);
+
+		$this->driver->query($query);
+
+		$this->refreshCache();
+	}
+
     public function schemaExists($name) {
         try {
             $this->getSchema($name);

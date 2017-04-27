@@ -5,12 +5,14 @@ namespace SGQL\Executor;
 use SGQL\Query;
 
 include_once(dirname(__FILE__) . '/traits/createable.php');
+include_once(dirname(__FILE__) . '/traits/destroyable.php');
 include_once(dirname(__FILE__) . '/traits/selectable.php');
 include_once(dirname(__FILE__) . '/traits/insertable.php');
 include_once(dirname(__FILE__).'/../query/query.php');
 
 class Executor {
 	use Createable;
+	use Destroyable;
 	use Selectable;
 	use Insertable;
 
@@ -31,6 +33,10 @@ class Executor {
     	switch($this->query->getQueryType()) {
 		    case Query::TYPE_CREATE:
 		    	$this->executeCreate();
+		    	return $this->results;
+		    	break;
+		    case Query::TYPE_DESTROY:
+		    	$this->executeDestroy();
 		    	return $this->results;
 		    	break;
 			case Query::TYPE_SELECT:
