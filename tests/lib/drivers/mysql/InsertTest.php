@@ -53,4 +53,26 @@ class InsertTest extends \SGQL\MySQL_Database_TestCase {
         $this->assertEquals(1, $results->startInsertId());
         $this->assertEquals(2, $results->affectedRows());
     }
+
+    public function testInsertOnDuplicateKey() {
+	    $driver = new MySQL(self::$hosts);
+	    $driver->useDatabase('sgql_unittests_data_1');
+
+	    $query = $driver->newQuery()
+		    ->insert('customers')
+		    ->values([
+			    [
+				    'name' => 'Bob Doyle',
+				    'type' => 3,
+			    ],
+		    ])
+	        ->onDuplicate([
+	        	'vip' => 1
+	        ]);
+
+	    $this->assertEquals(
+	    	"INSERT INTO `customers` (`name`,`type`) VALUES (:r0c0,:r0c1) ON DUPLICATE KEY UPDATE `vip` = :c0;",
+		    $query->toString()
+	    );
+    }
 }

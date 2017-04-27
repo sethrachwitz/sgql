@@ -101,6 +101,29 @@ class MySQL extends Query {
             }
 
             $sql = substr($sql, 0, -1);
+
+	        // Add SET (for entries that duplicate existing keys)
+            if (isset($this->parts[self::PART_SET])) {
+	            $sql .= ' ON DUPLICATE KEY UPDATE ';
+
+	            $columnKey = 0;
+	            foreach ($this->parts[self::PART_SET] as $column => $value) {
+		            if (is_string($column)) {
+			            $sql .= '`' . $column . '` = ';
+
+			            $placeholderName = 'c' . $columnKey;
+
+			            $sql .= ':c' . $columnKey . ', ';
+			            $this->data[$placeholderName] = $value;
+
+			            $columnKey++;
+		            } else {
+			            $sql .= $value . ', ';
+		            }
+	            }
+
+	            $sql = substr($sql, 0, -2);
+            }
         } else if ($this->queryType === self::TYPE_UPDATE) {
         	$sql .= 'UPDATE ';
 

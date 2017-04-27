@@ -93,6 +93,11 @@ abstract class Query {
     	return $this;
     }
 
+    public function onDuplicate(array $set) {
+    	$this->parts[self::PART_SET] = $this->validateSet($set);
+    	return $this;
+    }
+
     public function getData() {
         return $this->data;
     }
