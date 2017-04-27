@@ -67,6 +67,7 @@ class Graph {
 				`parent_id` int(10) UNSIGNED NOT NULL,
 				`child_id` int(10) UNSIGNED NOT NULL,
 				`type` tinyint(2) UNSIGNED NOT NULL,
+    		    `deleted_time` DATETIME NULL DEFAULT NULL,
 				PRIMARY KEY (`id`),
 			  UNIQUE KEY `table_ids` (`parent_id`,`child_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;");
@@ -134,6 +135,33 @@ class Graph {
 		$this->refreshCache();
 	}
 
+	public function applyUpdates() {
+    	// Go in ascending order of versions, and update the version as we go along so that all future updates are
+		// applied
+
+		$oldVersion = $this->version;
+
+    	if ($this->version == 'a.0.1') {
+			$this->driver->query("ALTER TABLE `sgql_associations` ADD `deleted_time` DATETIME NULL DEFAULT NULL AFTER `type`");
+			$this->version = 'a.0.2';
+	    }
+
+	    if ($oldVersion != $this->version) {
+    		$query = $this->driver->newQuery()
+			    ->update('sgql_info')
+			    ->set([
+			    	'value' => $this->version,
+			    ])
+			    ->where([
+			    	"item = 'version'"
+			    ]);
+
+    		$this->driver->query($query);
+
+		    $this->refreshCache();
+	    }
+	}
+
 	public function flushCache() {
     	// Flush local cache to file
 	}
@@ -176,6 +204,9 @@ class Graph {
 			}
 		}
 
+		// Apply updates here so we have an up-to-date version, but the other tables aren't read yet
+		$this->applyUpdates();
+
 		$sgqlTablesQuery = $this->driver->newQuery()
 			->select([
 				'sgql_tables' => [
@@ -200,6 +231,7 @@ class Graph {
 					'parent_id',
 					'child_id',
 					'type',
+					'deleted_time',
 				],
 				'st1' => [
 					'parent_name' => 'name',
@@ -210,7 +242,8 @@ class Graph {
 			])
 			->from('sgql_associations')
 			->join(['st1' => 'sgql_tables'], 'sgql_associations.parent_id = st1.id')
-			->join(['st2' => 'sgql_tables'], 'sgql_associations.child_id = st2.id');
+			->join(['st2' => 'sgql_tables'], 'sgql_associations.child_id = st2.id')
+			->where('sgql_associations.deleted_time IS NULL');
 
 		$associations = $this->driver->fetchAll($sgqlAssociationsQuery);
 
@@ -260,6 +293,9 @@ class Graph {
 					'child_id' => $schema2id,
 					'type' => $type,
 				],
+			])
+			->onDuplicate([
+				'deleted_time' => null,
 			]);
 
 		$result = $this->driver->query($insertAssociation);
