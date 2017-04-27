@@ -14,6 +14,7 @@ class Graph {
 
     const MODES = [self::MODE_OPEN, self::MODE_CLOSED];
 
+    private $version;
     private $mode;
     private $schemas = [];
     private $associations = [];
@@ -170,6 +171,8 @@ class Graph {
 		foreach ($sgqlInfo as $info) {
 			if ($info['item'] == 'mode') {
 				$this->mode = $info['value'];
+			} else if ($info['item'] == 'version') {
+				$this->version = $info['value'];
 			}
 		}
 
