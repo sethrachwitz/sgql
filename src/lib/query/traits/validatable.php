@@ -58,7 +58,7 @@ trait Validatable {
     }
 
     private function validateFrom($table) {
-        $this->validateClauseQueryType([self::TYPE_SELECT]);
+        $this->validateClauseQueryType([self::TYPE_SELECT, self::TYPE_UPDATE]);
 
         if (
             !(is_string($table) || $table !== '') &&
@@ -92,7 +92,7 @@ trait Validatable {
     }
 
     private function validateWhere($condition) {
-        $this->validateClauseQueryType([self::TYPE_SELECT]);
+        $this->validateClauseQueryType([self::TYPE_SELECT, self::TYPE_UPDATE]);
 
         return $condition;
     }
@@ -123,5 +123,21 @@ trait Validatable {
         }
 
         return $values;
+    }
+
+    private function validateSet($set) {
+	    $this->validateClauseQueryType([self::TYPE_INSERT, self::TYPE_UPDATE]);
+
+	    if (!is_array($set)) {
+		    throw new \Exception("Set options must be an array");
+	    }
+
+	    foreach ($set as $column => $value) {
+	    	if (is_array($value)) {
+	    		throw new \Exception("Invalid value for column '".$column."'");
+		    }
+	    }
+
+    	return $set;
     }
 }

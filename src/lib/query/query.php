@@ -9,6 +9,7 @@ abstract class Query {
 
     const TYPE_SELECT = 'SELECT';
     const TYPE_INSERT = 'INSERT';
+    const TYPE_UPDATE = 'UPDATE';
 
     const LEFT_JOIN = 'LEFT JOIN';
     const RIGHT_JOIN = 'RIGHT JOIN';
@@ -21,8 +22,9 @@ abstract class Query {
     const PART_JOIN = 'join';
     const PART_WHERE = 'WHERE';
     const PART_VALUES = 'VALUES';
+    const PART_SET = 'SET';
 
-    const QUERY_TYPES = [self::TYPE_SELECT, self::TYPE_INSERT];
+    const QUERY_TYPES = [self::TYPE_SELECT, self::TYPE_INSERT, self::TYPE_UPDATE];
     const JOIN_TYPES = [self::LEFT_JOIN, self::RIGHT_JOIN, self::OUTER_JOIN, self::INNER_JOIN];
 
     protected $data = [];
@@ -48,6 +50,12 @@ abstract class Query {
         $this->setQueryType(self::TYPE_INSERT);
         $this->parts[self::PART_INTO] = $this->validateInto($table);
         return $this;
+    }
+
+    public function update($table) {
+    	$this->setQueryType(self::TYPE_UPDATE);
+    	$this->parts[self::PART_FROM] = $this->validateFrom($table);
+    	return $this;
     }
 
     public function from($table) {
@@ -78,6 +86,11 @@ abstract class Query {
         }
 
         return $this;
+    }
+
+    public function set(array $set) {
+    	$this->parts[self::PART_SET] = $this->validateSet($set);
+    	return $this;
     }
 
     public function getData() {
