@@ -14,7 +14,7 @@ use SGQL\Query;
 use SGQL\Executor;
 
 class SGQL {
-    const VERSION = 'a.0.1';
+    const VERSION = 'a.0.2';
 
     const ASSOCIATION_TYPE_ONE_TO_ONE = '-';
     const ASSOCIATION_TYPE_MANY_TO_ONE = '<-';
