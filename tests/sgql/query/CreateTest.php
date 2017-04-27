@@ -92,4 +92,27 @@ class CreateTest extends SGQL_MySQL_Database_TestCase {
 			$this->assertEquals("Invalid association type '< - >'", $e->getMessage());
 		}
 	}
+
+	public function testCreatePreviouslyDestroyedAssociation() {
+		$sgql = new SGQL(self::$config, self::$database);
+		$sgql->initialize();
+
+		$query = $sgql->newQuery()
+			->createAssociation('orders', '<->', 'products');
+		$sgql->query($query);
+
+		$this->assertCount(2, $sgql->getGraph()->getAssociations());
+
+		$query = $sgql->newQuery()
+			->destroyAssociation('orders', 'products');
+		$sgql->query($query);
+
+		$this->assertCount(1, $sgql->getGraph()->getAssociations());
+
+		$query = $sgql->newQuery()
+			->createAssociation('orders', '<->', 'products');
+		$sgql->query($query);
+
+		$this->assertCount(2, $sgql->getGraph()->getAssociations());
+	}
 }
