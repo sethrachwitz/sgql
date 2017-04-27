@@ -238,7 +238,7 @@ class Graph {
         } else if ($this->mode == 'open') {
         	return $this->addAssociation($this->getSchema($schema1), $this->getSchema($schema2), Association::TYPE_MANY_TO_MANY);
         } else {
-            throw new \Exception("Relationship between '".$schema1."' and '".$schema2."' was not found");
+            throw new \Exception("Association between '".$schema1."' and '".$schema2."' was not found");
         }
     }
 
