@@ -188,6 +188,7 @@ class Graph {
 
 		$sgqlTables = $this->driver->fetchAll($sgqlTablesQuery);
 
+		$this->schemas = [];
 		foreach ($sgqlTables as $table) {
 			$this->schemas[$table['name']] = new Schema($table['id'], $table['name'], $table['primary_column']);
 		}
@@ -213,6 +214,7 @@ class Graph {
 
 		$associations = $this->driver->fetchAll($sgqlAssociationsQuery);
 
+		$this->associations = [];
 		foreach ($associations as $association) {
 			$this->associations[$association['parent_name'].' '.$association['child_name']] = new Association($this->getSchema($association['parent_name']), $this->getSchema($association['child_name']), $association['type'], $association['id']);
 		}
