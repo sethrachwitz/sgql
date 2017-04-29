@@ -23,7 +23,7 @@ class Graph_MySQL_Database_TestCase extends MySQL_Database_TestCase {
 	}
 
 	public function addAssociations() {
-		self::$graph->addAssociation(self::$graph->getSchema('customers'), self::$graph->getSchema('orders'), Graph\Association::TYPE_MANY_TO_ONE);
-		self::$graph->addAssociation(self::$graph->getSchema('orders'), self::$graph->getSchema('products'), Graph\Association::TYPE_MANY_TO_MANY);
+		self::$graph->createAssociation(self::$graph->getSchema('customers'), self::$graph->getSchema('orders'), Graph\Association::TYPE_MANY_TO_ONE);
+		self::$graph->createAssociation(self::$graph->getSchema('orders'), self::$graph->getSchema('products'), Graph\Association::TYPE_MANY_TO_MANY);
 	}
 }

@@ -47,8 +47,8 @@ class GraphTest extends MySQL_Database_TestCase {
 		$ordersSchema = $graph->getSchema('orders');
 		$productsSchema = $graph->getSchema('products');
 
-		$graph->addAssociation($customersSchema, $ordersSchema, Association::TYPE_MANY_TO_ONE);
-		$graph->addAssociation($ordersSchema, $productsSchema, Association::TYPE_MANY_TO_MANY);
+		$graph->createAssociation($customersSchema, $ordersSchema, Association::TYPE_MANY_TO_ONE);
+		$graph->createAssociation($ordersSchema, $productsSchema, Association::TYPE_MANY_TO_MANY);
 
         $namespace = [
             'customers',

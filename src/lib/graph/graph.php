@@ -267,13 +267,13 @@ class Graph {
         } else if (isset($this->associations[$schema2.' '.$schema1])) {
             return $this->associations[$schema2.' '.$schema1];
         } else if ($this->mode == 'open') {
-        	return $this->addAssociation($this->getSchema($schema1), $this->getSchema($schema2), Association::TYPE_MANY_TO_MANY);
+        	return $this->createAssociation($this->getSchema($schema1), $this->getSchema($schema2), Association::TYPE_MANY_TO_MANY);
         } else {
             throw new \Exception("Association between '".$schema1."' and '".$schema2."' was not found");
         }
     }
 
-    public function addAssociation(Schema $schema1, Schema $schema2, $type) {
+    public function createAssociation(Schema $schema1, Schema $schema2, $type) {
     	if (!in_array($type, Association::ASSOCIATION_TYPES)) {
     		throw new \Exception("Invalid association type '".$type."'");
 		}

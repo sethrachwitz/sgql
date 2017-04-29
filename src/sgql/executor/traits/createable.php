@@ -52,6 +52,6 @@ trait Createable {
 		$parentSchema = $this->graph->getSchema($parent);
 		$childSchema = $this->graph->getSchema($child);
 
-		return $this->graph->addAssociation($parentSchema, $childSchema, $type);
+		return $this->graph->createAssociation($parentSchema, $childSchema, $type);
 	}
 }
